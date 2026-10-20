@@ -1,0 +1,4 @@
+interface:
+  display_name: "MMD 转换与 Blender"
+  short_description: "定位游戏资源并把 NRC 角色导出为 PMX，验证骨架、服装权重、表情、物理与视频"
+  default_prompt: "用 $mmd-blender 从本机客户端准备所需游戏资源，将当前角色和服装导出为 PMX，并验证服装骨骼、表情、动作与物理。"

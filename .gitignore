@@ -1,0 +1,37 @@
+# Game and extracted runtime assets
+*.pak
+*.ucas
+*.utoc
+*.uasset
+*.uexp
+*.ubulk
+*.glb
+*.gltf
+*.blend
+*.vmd
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.exr
+*.tga
+
+# Local configuration, keys and exports
+config.json
+.env
+*.local.json
+runtime/
+exports/
+outputs/
+work/
+conversation-evidence/
+library-morph/
+presets/
+repro-check/
+workflow-tools/
+
+# Python and OS
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

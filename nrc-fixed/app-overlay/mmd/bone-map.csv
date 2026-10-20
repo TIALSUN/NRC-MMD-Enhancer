@@ -1,0 +1,309 @@
+﻿源骨,目标骨名,动作,分组,存在,PC2权重顶点,PC1权重顶点,PC2父级,备注,置信度
+Bip001,センター,改名,核心人形,PC2+PC1,0,0,BoneHang,位于骨盆高度，作为整个人形的控制根,高
+Bip001-Head,頭,改名,核心人形,PC2+PC1,2006,1530,Bip001-Neck,权重最多（PC2 2006 顶点）,高
+Bip001-L-Calf,左ひざ,改名,核心人形,PC2+PC1,0,0,Bip001-L-Thigh,,高
+Bip001-L-Clavicle,左肩,改名,核心人形,PC2+PC1,276,193,Bip001-Spine1,成对骨，右侧同名换 .R,高
+Bip001-L-Finger0,左親指０,改名,核心人形,PC2+PC1,85,81,Bip001-L-Hand,,高
+Bip001-L-Finger01,左親指１,改名,核心人形,PC2+PC1,69,97,Bip001-L-Finger0,,高
+Bip001-L-Finger02,左親指２,改名,核心人形,PC2+PC1,45,41,Bip001-L-Finger01,,高
+Bip001-L-Finger1,左人指１,改名,核心人形,PC2+PC1,45,61,Bip001-L-Hand,,高
+Bip001-L-Finger11,左人指２,改名,核心人形,PC2+PC1,38,54,Bip001-L-Finger1,,高
+Bip001-L-Finger12,左人指３,改名,核心人形,PC2+PC1,37,49,Bip001-L-Finger11,,高
+Bip001-L-Finger2,左中指１,改名,核心人形,PC2+PC1,73,57,Bip001-L-Hand,,高
+Bip001-L-Finger21,左中指２,改名,核心人形,PC2+PC1,67,54,Bip001-L-Finger2,,高
+Bip001-L-Finger22,左中指３,改名,核心人形,PC2+PC1,36,49,Bip001-L-Finger21,,高
+Bip001-L-Finger3,左薬指１,改名,核心人形,PC2+PC1,69,55,Bip001-L-Hand,,高
+Bip001-L-Finger31,左薬指２,改名,核心人形,PC2+PC1,69,54,Bip001-L-Finger3,,高
+Bip001-L-Finger32,左薬指３,改名,核心人形,PC2+PC1,37,49,Bip001-L-Finger31,,高
+Bip001-L-Finger4,左小指１,改名,核心人形,PC2+PC1,53,55,Bip001-L-Hand,,高
+Bip001-L-Finger41,左小指２,改名,核心人形,PC2+PC1,38,54,Bip001-L-Finger4,,高
+Bip001-L-Finger42,左小指３,改名,核心人形,PC2+PC1,37,49,Bip001-L-Finger41,,高
+Bip001-L-Foot,左足首,改名,核心人形,PC2+PC1,453,1110,Bip001-L-Calf,,高
+Bip001-L-Forearm,左ひじ,改名,核心人形,PC2+PC1,0,0,Bip001-L-UpperArm,,高
+Bip001-L-Hand,左手首,改名,核心人形,PC2+PC1,445,489,Bip001-L-Forearm,,高
+Bip001-L-Thigh,左足,改名并改父,核心人形,PC2+PC1,0,0,Bip001-Pelvis,,高
+Bip001-L-Toe0,左つま先,改名,核心人形,PC2+PC1,204,543,Bip001-L-Foot,,高
+Bip001-L-UpperArm,左腕,改名,核心人形,PC2+PC1,0,0,Bip001-L-Clavicle,,高
+Bip001-Neck,首,改名,核心人形,PC2+PC1,70,90,Bip001-Spine1,,高
+Bip001-Pelvis,腰,改名并改父,核心人形,PC2+PC1,641,625,Bip001,父级改挂到新建的 グルーブ,高
+Bip001-R-Calf,右ひざ,改名,核心人形,PC2+PC1,0,0,Bip001-R-Thigh,,高
+Bip001-R-Clavicle,右肩,改名,核心人形,PC2+PC1,386,319,Bip001-Spine1,,高
+Bip001-R-Finger0,右親指０,改名,核心人形,PC2+PC1,85,81,Bip001-R-Hand,,高
+Bip001-R-Finger01,右親指１,改名,核心人形,PC2+PC1,69,96,Bip001-R-Finger0,,高
+Bip001-R-Finger02,右親指２,改名,核心人形,PC2+PC1,45,41,Bip001-R-Finger01,,高
+Bip001-R-Finger1,右人指１,改名,核心人形,PC2+PC1,45,61,Bip001-R-Hand,,高
+Bip001-R-Finger11,右人指２,改名,核心人形,PC2+PC1,38,54,Bip001-R-Finger1,,高
+Bip001-R-Finger12,右人指３,改名,核心人形,PC2+PC1,37,49,Bip001-R-Finger11,,高
+Bip001-R-Finger2,右中指１,改名,核心人形,PC2+PC1,73,57,Bip001-R-Hand,,高
+Bip001-R-Finger21,右中指２,改名,核心人形,PC2+PC1,67,54,Bip001-R-Finger2,,高
+Bip001-R-Finger22,右中指３,改名,核心人形,PC2+PC1,36,49,Bip001-R-Finger21,,高
+Bip001-R-Finger3,右薬指１,改名,核心人形,PC2+PC1,69,55,Bip001-R-Hand,,高
+Bip001-R-Finger31,右薬指２,改名,核心人形,PC2+PC1,69,54,Bip001-R-Finger3,,高
+Bip001-R-Finger32,右薬指３,改名,核心人形,PC2+PC1,37,49,Bip001-R-Finger31,,高
+Bip001-R-Finger4,右小指１,改名,核心人形,PC2+PC1,53,55,Bip001-R-Hand,,高
+Bip001-R-Finger41,右小指２,改名,核心人形,PC2+PC1,38,54,Bip001-R-Finger4,,高
+Bip001-R-Finger42,右小指３,改名,核心人形,PC2+PC1,37,49,Bip001-R-Finger41,,高
+Bip001-R-Foot,右足首,改名,核心人形,PC2+PC1,453,1110,Bip001-R-Calf,,高
+Bip001-R-Forearm,右ひじ,改名,核心人形,PC2+PC1,0,0,Bip001-R-UpperArm,,高
+Bip001-R-Hand,右手首,改名,核心人形,PC2+PC1,445,489,Bip001-R-Forearm,,高
+Bip001-R-Thigh,右足,改名并改父,核心人形,PC2+PC1,0,0,Bip001-Pelvis,,高
+Bip001-R-Toe0,右つま先,改名,核心人形,PC2+PC1,204,546,Bip001-R-Foot,,高
+Bip001-R-UpperArm,右腕,改名,核心人形,PC2+PC1,0,0,Bip001-R-Clavicle,,高
+Bip001-Spine,上半身,改名,核心人形,PC2+PC1,470,566,Bip001-Pelvis,腰→上半身,高
+Bip001-Spine1,上半身2,改名,核心人形,PC2+PC1,412,700,Bip001-Spine,上半身→上半身2→首,高
+BoneHang,BoneHang,保留,核心人形,PC2+PC1,0,0,Root,无权重挂点，保留原名,高
+Bone_Bag_00,Bone_Bag_00,保留,背包/挂饰,PC2+PC1,138,97,Bip001-Spine1,背包链，PC3 挂饰也走这里,高
+Bone_Bag_01,Bone_Bag_01,保留,背包/挂饰,PC2+PC1,252,223,Bip001-Spine1,背包链，PC3 挂饰也走这里,高
+Bone_Bag_03,Bone_Bag_03,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_20,背包链，PC3 挂饰也走这里,高
+Bone_Bag_04,Bone_Bag_04,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_20,背包链，PC3 挂饰也走这里,高
+Bone_Bag_05,Bone_Bag_05,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_06,背包链，PC3 挂饰也走这里,高
+Bone_Bag_06,Bone_Bag_06,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_07,背包链，PC3 挂饰也走这里,高
+Bone_Bag_07,Bone_Bag_07,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_20,背包链，PC3 挂饰也走这里,高
+Bone_Bag_10,Bone_Bag_10,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_19,背包链，PC3 挂饰也走这里,高
+Bone_Bag_11,Bone_Bag_11,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_19,背包链，PC3 挂饰也走这里,高
+Bone_Bag_15,Bone_Bag_15,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_19,背包链，PC3 挂饰也走这里,高
+Bone_Bag_16,Bone_Bag_16,保留,背包/挂饰,PC2+PC1,0,0,Bone_Bag_19,背包链，PC3 挂饰也走这里,高
+Bone_Bag_17,Bone_Bag_17,保留,背包/挂饰,PC2+PC1,137,0,Bone_Bag_18,背包链，PC3 挂饰也走这里,高
+Bone_Bag_18,Bone_Bag_18,保留,背包/挂饰,PC2+PC1,136,0,Bone_Bag_19,背包链，PC3 挂饰也走这里,高
+Bone_Bag_19,Bone_Bag_19,保留,背包/挂饰,PC2+PC1,737,1853,Bone_Bag_20,背包链，PC3 挂饰也走这里,高
+Bone_Bag_20,Bone_Bag_20,保留,背包/挂饰,PC2+PC1,990,1610,Bone_Bag_root,背包链，PC3 挂饰也走这里,高
+Bone_Bag_root,Bone_Bag_root,保留,背包/挂饰,PC2+PC1,0,0,Bip001-Spine1,背包链，PC3 挂饰也走这里,高
+Bone_Eye_gaoguang01,Bone_Eye_gaoguang01,保留,面部驱动,PC2+PC1,62,62,Bip001-Head,眼高光 2 根（各 62 顶点），别改父级,高
+Bone_Eye_gaoguang02,Bone_Eye_gaoguang02,保留,面部驱动,PC2+PC1,62,62,Bip001-Head,眼高光 2 根（各 62 顶点），别改父级,高
+Bone_K_qunzi00,Bone_K_qunzi00,保留,裙子-K,PC2,0,,Bone_K_qunzi_root,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi01,Bone_K_qunzi01,保留,裙子-K,PC2,0,,Bone_K_qunzi00,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi02,Bone_K_qunzi02,保留,裙子-K,PC2,0,,Bone_K_qunzi01,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi03,Bone_K_qunzi03,保留,裙子-K,PC2,0,,Bone_K_qunzi_root,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi04,Bone_K_qunzi04,保留,裙子-K,PC2,0,,Bone_K_qunzi03,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi05,Bone_K_qunzi05,保留,裙子-K,PC2,0,,Bone_K_qunzi04,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi06,Bone_K_qunzi06,保留,裙子-K,PC2,0,,Bone_K_qunzi_root,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi07,Bone_K_qunzi07,保留,裙子-K,PC2,0,,Bone_K_qunzi06,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi08,Bone_K_qunzi08,保留,裙子-K,PC2,0,,Bone_K_qunzi07,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi09,Bone_K_qunzi09,保留,裙子-K,PC2,0,,Bone_K_qunzi_root,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi10,Bone_K_qunzi10,保留,裙子-K,PC2,0,,Bone_K_qunzi09,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi11,Bone_K_qunzi11,保留,裙子-K,PC2,0,,Bone_K_qunzi10,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi12,Bone_K_qunzi12,保留,裙子-K,PC2,0,,Bone_K_qunzi_root,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi13,Bone_K_qunzi13,保留,裙子-K,PC2,0,,Bone_K_qunzi12,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi14,Bone_K_qunzi14,保留,裙子-K,PC2,0,,Bone_K_qunzi13,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi15,Bone_K_qunzi15,保留,裙子-K,PC2,0,,Bone_K_qunzi_root,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi16,Bone_K_qunzi16,保留,裙子-K,PC2,0,,Bone_K_qunzi15,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi17,Bone_K_qunzi17,保留,裙子-K,PC2,0,,Bone_K_qunzi16,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_K_qunzi_root,Bone_K_qunzi_root,保留,裙子-K,PC2,0,,Bip001-Pelvis,PC2 独有 18 段，无权重（长裙预留）,高
+Bone_L_Dabi01,Bone_L_Dabi01,保留,变形辅助-臂,PC2,59,,Bone_upperarm_l_1,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabi02,Bone_L_Dabi02,保留,变形辅助-臂,PC2,54,,Bone_upperarm_l_1,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabi_01,Bone_L_Dabi_01,保留,变形辅助-臂,PC1,,50,,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabi_02,Bone_L_Dabi_02,保留,变形辅助-臂,PC1,,41,,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabi_03,Bone_L_Dabi_03,保留,变形辅助-臂,PC1,,42,,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabi_04,Bone_L_Dabi_04,保留,变形辅助-臂,PC1,,54,,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabii03,Bone_L_Dabii03,保留,变形辅助-臂,PC2,53,,Bone_upperarm_l_1,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Dabii04,Bone_L_Dabii04,保留,变形辅助-臂,PC2,49,,Bone_upperarm_l_1,左手侧袖口/大臂附加骨（PC1 为 Dabi_01，PC2 为 Dabi01）,高
+Bone_L_Datui_00,Bone_L_Datui_00,保留,变形辅助-腿,PC2+PC1,0,47,Bone_thigh_l_1,左大腿附加骨，PC2 有、PC1 无，无权重,高
+Bone_L_Datui_01,Bone_L_Datui_01,保留,变形辅助-腿,PC2+PC1,0,66,Bone_thigh_l_1,左大腿附加骨，PC2 有、PC1 无，无权重,高
+Bone_L_Datui_02,Bone_L_Datui_02,保留,变形辅助-腿,PC2+PC1,0,53,Bone_thigh_l_1,左大腿附加骨，PC2 有、PC1 无，无权重,高
+Bone_L_Datui_03,Bone_L_Datui_03,保留,变形辅助-腿,PC2+PC1,0,59,Bone_thigh_l_1,左大腿附加骨，PC2 有、PC1 无，无权重,高
+Bone_L_S_B_piaodai03,Bone_L_S_B_piaodai03,保留,飘带,PC2+PC1,0,0,Bip001-L-Forearm,左臂飘带,高
+Bone_L_S_B_piaodai04,Bone_L_S_B_piaodai04,保留,飘带,PC2+PC1,0,0,Bone_L_S_B_piaodai03,左臂飘带,高
+Bone_L_S_B_piaodai05,Bone_L_S_B_piaodai05,保留,飘带,PC2+PC1,0,0,Bone_L_S_B_piaodai04,左臂飘带,高
+Bone_L_S_piaodai00,Bone_L_S_piaodai00,保留,飘带,PC2+PC1,0,0,Bip001-Spine1,左肩飘带,高
+Bone_L_S_piaodai01,Bone_L_S_piaodai01,保留,飘带,PC2+PC1,0,0,Bone_L_S_piaodai00,左肩飘带,高
+Bone_L_S_piaodai02,Bone_L_S_piaodai02,保留,飘带,PC2+PC1,0,0,Bone_L_S_piaodai01,左肩飘带,高
+Bone_L_erduo01,Bone_L_erduo01,保留,面部驱动,PC2+PC1,111,91,Bip001-Head,左耳,高
+Bone_Left_Eye_SkinJNT,Bone_Left_Eye_SkinJNT,保留,面部驱动,PC2+PC1,0,0,Bip001-Head,无权重，父级关系保留,高
+Bone_M_S_piaodai00,Bone_M_S_piaodai00,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai09,肩中飘带（3 串）,高
+Bone_M_S_piaodai01,Bone_M_S_piaodai01,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai10,肩中飘带（3 串）,高
+Bone_M_S_piaodai02,Bone_M_S_piaodai02,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai11,肩中飘带（3 串）,高
+Bone_M_S_piaodai03,Bone_M_S_piaodai03,保留,飘带,PC2+PC1,0,0,Bip001-Spine1,肩中飘带（3 串）,高
+Bone_M_S_piaodai04,Bone_M_S_piaodai04,保留,飘带,PC2+PC1,0,0,Bip001-Spine1,肩中飘带（3 串）,高
+Bone_M_S_piaodai05,Bone_M_S_piaodai05,保留,飘带,PC2+PC1,0,0,Bip001-Spine1,肩中飘带（3 串）,高
+Bone_M_S_piaodai07,Bone_M_S_piaodai07,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai01,肩中飘带（3 串）,高
+Bone_M_S_piaodai09,Bone_M_S_piaodai09,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai03,肩中飘带（3 串）,高
+Bone_M_S_piaodai10,Bone_M_S_piaodai10,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai04,肩中飘带（3 串）,高
+Bone_M_S_piaodai11,Bone_M_S_piaodai11,保留,飘带,PC2+PC1,0,0,Bone_M_S_piaodai05,肩中飘带（3 串）,高
+Bone_M_TouFa00,Bone_M_TouFa00,保留,头发,PC2,0,,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa01,Bone_M_TouFa01,保留,头发,PC2,0,,Bone_M_TouFa00,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa02,Bone_M_TouFa02,保留,头发,PC2,0,,Bone_M_TouFa01,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa03,Bone_M_TouFa03,保留,头发,PC2,0,,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa04,Bone_M_TouFa04,保留,头发,PC2,0,,Bone_M_TouFa03,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa05,Bone_M_TouFa05,保留,头发,PC2,0,,Bone_M_TouFa04,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa06,Bone_M_TouFa06,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa07,Bone_M_TouFa07,保留,头发,PC2+PC1,85,0,Bone_M_TouFa06,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa08,Bone_M_TouFa08,保留,头发,PC2+PC1,77,0,Bone_M_TouFa07,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa09,Bone_M_TouFa09,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa10,Bone_M_TouFa10,保留,头发,PC2+PC1,0,0,Bone_M_TouFa09,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa11,Bone_M_TouFa11,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa12,Bone_M_TouFa12,保留,头发,PC2+PC1,0,0,Bone_M_TouFa11,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa13,Bone_M_TouFa13,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa14,Bone_M_TouFa14,保留,头发,PC2+PC1,0,0,Bone_M_TouFa13,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa15,Bone_M_TouFa15,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa16,Bone_M_TouFa16,保留,头发,PC2+PC1,0,0,Bone_M_TouFa15,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa17,Bone_M_TouFa17,保留,头发,PC2+PC1,0,0,Bone_M_TouFa16,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa18,Bone_M_TouFa18,保留,头发,PC2+PC1,0,126,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa19,Bone_M_TouFa19,保留,头发,PC2+PC1,0,130,Bone_M_TouFa18,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa20,Bone_M_TouFa20,保留,头发,PC2+PC1,0,85,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa21,Bone_M_TouFa21,保留,头发,PC2+PC1,0,90,Bone_M_TouFa20,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa22,Bone_M_TouFa22,保留,头发,PC2,0,,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa23,Bone_M_TouFa23,保留,头发,PC2,0,,Bone_M_TouFa22,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa24,Bone_M_TouFa24,保留,头发,PC2,0,,Bone_M_TouFa23,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa25,Bone_M_TouFa25,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa26,Bone_M_TouFa26,保留,头发,PC2+PC1,0,0,Bone_M_TouFa25,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa27,Bone_M_TouFa27,保留,头发,PC2+PC1,0,0,Bone_M_TouFa26,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa28,Bone_M_TouFa28,保留,头发,PC2,0,,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa29,Bone_M_TouFa29,保留,头发,PC2,0,,Bone_M_TouFa28,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa30,Bone_M_TouFa30,保留,头发,PC2,0,,Bone_M_TouFa29,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa31,Bone_M_TouFa31,保留,头发,PC2+PC1,0,66,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa32,Bone_M_TouFa32,保留,头发,PC2+PC1,0,0,Bone_M_TouFa31,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa33,Bone_M_TouFa33,保留,头发,PC2+PC1,0,0,Bone_M_TouFa32,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa34,Bone_M_TouFa34,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa35,Bone_M_TouFa35,保留,头发,PC2+PC1,0,0,Bone_M_TouFa34,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa36,Bone_M_TouFa36,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa37,Bone_M_TouFa37,保留,头发,PC2+PC1,0,0,Bone_M_TouFa36,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa38,Bone_M_TouFa38,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa39,Bone_M_TouFa39,保留,头发,PC2+PC1,0,0,Bone_M_TouFa38,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa40,Bone_M_TouFa40,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa41,Bone_M_TouFa41,保留,头发,PC2+PC1,0,0,Bone_M_TouFa40,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa42,Bone_M_TouFa42,保留,头发,PC2+PC1,0,79,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa43,Bone_M_TouFa43,保留,头发,PC2+PC1,0,51,Bone_M_TouFa42,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa44,Bone_M_TouFa44,保留,头发,PC2+PC1,0,82,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa45,Bone_M_TouFa45,保留,头发,PC2+PC1,0,55,Bone_M_TouFa44,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa46,Bone_M_TouFa46,保留,头发,PC2+PC1,0,0,Bone_M_TouiFa_root,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa47,Bone_M_TouFa47,保留,头发,PC2+PC1,0,0,Bone_M_TouFa46,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouFa48,Bone_M_TouFa48,保留,头发,PC2+PC1,0,0,Bone_M_TouFa47,头发物理链；PC2 有 TouFa00-48，其中仅 TouFa07(85)/TouFa08(77) 带权重，其余段当前为 0 权重,高
+Bone_M_TouiFa_root,Bone_M_TouiFa_root,保留,头发,PC2+PC1,2520,1525,Bip001-Head,头发总根骨（游戏内拼写为 TouiFa，与子链 TouFa 不同）；PC2 2520 权重（头饰 Hi 的 511 顶点也挂在这里），必留,高
+Bone_M_WeiBa00,Bone_M_WeiBa00,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa_root,14 段，当前无权重,高
+Bone_M_WeiBa01,Bone_M_WeiBa01,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa00,14 段，当前无权重,高
+Bone_M_WeiBa02,Bone_M_WeiBa02,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa01,14 段，当前无权重,高
+Bone_M_WeiBa03,Bone_M_WeiBa03,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa02,14 段，当前无权重,高
+Bone_M_WeiBa04,Bone_M_WeiBa04,保留,尾巴,PC2,0,,Bone_M_WeiBa_root,14 段，当前无权重,高
+Bone_M_WeiBa05,Bone_M_WeiBa05,保留,尾巴,PC2,0,,Bone_M_WeiBa_root,14 段，当前无权重,高
+Bone_M_WeiBa06,Bone_M_WeiBa06,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa_root,14 段，当前无权重,高
+Bone_M_WeiBa07,Bone_M_WeiBa07,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa06,14 段，当前无权重,高
+Bone_M_WeiBa08,Bone_M_WeiBa08,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa07,14 段，当前无权重,高
+Bone_M_WeiBa09,Bone_M_WeiBa09,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa08,14 段，当前无权重,高
+Bone_M_WeiBa10,Bone_M_WeiBa10,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa_root,14 段，当前无权重,高
+Bone_M_WeiBa11,Bone_M_WeiBa11,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa10,14 段，当前无权重,高
+Bone_M_WeiBa12,Bone_M_WeiBa12,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa11,14 段，当前无权重,高
+Bone_M_WeiBa13,Bone_M_WeiBa13,保留,尾巴,PC2+PC1,0,0,Bone_M_WeiBa12,14 段，当前无权重,高
+Bone_M_WeiBa_root,Bone_M_WeiBa_root,保留,尾巴,PC2+PC1,0,0,Bip001-Pelvis,14 段，当前无权重,高
+Bone_M_Yilin01,Bone_M_Yilin01,保留,衣领,PC1,,0,,PC1 独有衣领骨,高
+Bone_M_shetou01,Bone_M_shetou01,保留,面部驱动,PC2+PC1,125,125,Bip001-Head,舌,高
+Bone_M_xiaba01,Bone_M_xiaba01,保留,面部驱动,PC2+PC1,595,487,Bip001-Head,下巴：带权重 595（PC2），可做口型骨モーフ,高
+Bone_M_zuijiao_00,Bone_M_zuijiao_00,保留,面部驱动,PC2+PC1,211,176,Bip001-Head,嘴角 2 根，可做笑/怒骨モーフ,高
+Bone_M_zuijiao_01,Bone_M_zuijiao_01,保留,面部驱动,PC2+PC1,205,179,Bip001-Head,嘴角 2 根，可做笑/怒骨モーフ,高
+Bone_N_qunzi00,Bone_N_qunzi00,保留,裙子-N,PC2,51,,Bone_N_qunzi_root,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi01,Bone_N_qunzi01,保留,裙子-N,PC2,75,,Bone_N_qunzi00,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi02,Bone_N_qunzi02,保留,裙子-N,PC2,86,,Bone_N_qunzi_root,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi03,Bone_N_qunzi03,保留,裙子-N,PC2,110,,Bone_N_qunzi02,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi04,Bone_N_qunzi04,保留,裙子-N,PC2,104,,Bone_N_qunzi_root,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi05,Bone_N_qunzi05,保留,裙子-N,PC2,126,,Bone_N_qunzi04,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi06,Bone_N_qunzi06,保留,裙子-N,PC2,84,,Bone_N_qunzi_root,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi07,Bone_N_qunzi07,保留,裙子-N,PC2,107,,Bone_N_qunzi06,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi08,Bone_N_qunzi08,保留,裙子-N,PC2,45,,Bone_N_qunzi_root,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi09,Bone_N_qunzi09,保留,裙子-N,PC2,61,,Bone_N_qunzi08,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi10,Bone_N_qunzi10,保留,裙子-N,PC2,45,,Bone_N_qunzi_root,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi11,Bone_N_qunzi11,保留,裙子-N,PC2,59,,Bone_N_qunzi10,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_N_qunzi_root,Bone_N_qunzi_root,保留,裙子-N,PC2,0,,Bip001-Pelvis,12 段且带权重，当前默认裙子的实际变形链,高
+Bone_R_Dabi01,Bone_R_Dabi01,保留,变形辅助-臂,PC2,42,,Bone_upperarm_r_1,右手侧，同上,高
+Bone_R_Dabi02,Bone_R_Dabi02,保留,变形辅助-臂,PC2,41,,Bone_upperarm_r_1,右手侧，同上,高
+Bone_R_Dabi03,Bone_R_Dabi03,保留,变形辅助-臂,PC2,44,,Bone_upperarm_r_1,右手侧，同上,高
+Bone_R_Dabi04,Bone_R_Dabi04,保留,变形辅助-臂,PC2,47,,Bone_upperarm_r_1,右手侧，同上,高
+Bone_R_Dabi_01,Bone_R_Dabi_01,保留,变形辅助-臂,PC1,,50,,右手侧，同上,高
+Bone_R_Dabi_02,Bone_R_Dabi_02,保留,变形辅助-臂,PC1,,41,,右手侧，同上,高
+Bone_R_Dabi_03,Bone_R_Dabi_03,保留,变形辅助-臂,PC1,,42,,右手侧，同上,高
+Bone_R_Dabi_04,Bone_R_Dabi_04,保留,变形辅助-臂,PC1,,52,,右手侧，同上,高
+Bone_R_Datui_00,Bone_R_Datui_00,保留,变形辅助-腿,PC2+PC1,0,49,Bone_thigh_r_1,右大腿附加骨，同上,高
+Bone_R_Datui_01,Bone_R_Datui_01,保留,变形辅助-腿,PC2+PC1,0,69,Bone_thigh_r_1,右大腿附加骨，同上,高
+Bone_R_Datui_02,Bone_R_Datui_02,保留,变形辅助-腿,PC2+PC1,0,53,Bone_thigh_r_1,右大腿附加骨，同上,高
+Bone_R_Datui_03,Bone_R_Datui_03,保留,变形辅助-腿,PC2+PC1,0,49,Bone_thigh_r_1,右大腿附加骨，同上,高
+Bone_R_S_B_piaodai07,Bone_R_S_B_piaodai07,保留,飘带,PC2+PC1,0,0,Bip001-R-Forearm,右臂飘带,高
+Bone_R_S_B_piaodai08,Bone_R_S_B_piaodai08,保留,飘带,PC2+PC1,0,0,Bone_R_S_B_piaodai07,右臂飘带,高
+Bone_R_S_B_piaodai09,Bone_R_S_B_piaodai09,保留,飘带,PC2+PC1,0,0,Bone_R_S_B_piaodai08,右臂飘带,高
+Bone_R_S_piaodai00,Bone_R_S_piaodai00,保留,飘带,PC2+PC1,0,0,Bip001-Spine1,右肩飘带,高
+Bone_R_S_piaodai01,Bone_R_S_piaodai01,保留,飘带,PC2+PC1,0,0,Bone_R_S_piaodai00,右肩飘带,高
+Bone_R_S_piaodai02,Bone_R_S_piaodai02,保留,飘带,PC2+PC1,0,0,Bone_R_S_piaodai01,右肩飘带,高
+Bone_R_erduo01,Bone_R_erduo01,保留,面部驱动,PC2+PC1,111,91,Bip001-Head,右耳,高
+Bone_Right_Eye_SkinJNT,Bone_Right_Eye_SkinJNT,保留,面部驱动,PC2+PC1,0,0,Bip001-Head,无权重，父级关系保留,高
+Bone_U_pidai00,Bone_U_pidai00,保留,腰带,PC2+PC1,0,0,Bip001-Pelvis,腰带 2 段,高
+Bone_U_pidai01,Bone_U_pidai01,保留,腰带,PC2+PC1,0,0,Bone_U_pidai00,腰带 2 段,高
+Bone_W_qunzi00,Bone_W_qunzi00,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi_root,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi01,Bone_W_qunzi01,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi00,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi02,Bone_W_qunzi02,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi01,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi03,Bone_W_qunzi03,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi02,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi04,Bone_W_qunzi04,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi_root,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi05,Bone_W_qunzi05,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi04,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi06,Bone_W_qunzi06,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi05,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi07,Bone_W_qunzi07,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi06,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi08,Bone_W_qunzi08,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi_root,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi09,Bone_W_qunzi09,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi08,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi10,Bone_W_qunzi10,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi09,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi11,Bone_W_qunzi11,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi10,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi12,Bone_W_qunzi12,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi_root,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi13,Bone_W_qunzi13,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi12,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi14,Bone_W_qunzi14,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi13,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi15,Bone_W_qunzi15,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi14,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi16,Bone_W_qunzi16,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi_root,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi17,Bone_W_qunzi17,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi16,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi18,Bone_W_qunzi18,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi17,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi19,Bone_W_qunzi19,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi18,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi20,Bone_W_qunzi20,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi_root,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi21,Bone_W_qunzi21,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi20,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi22,Bone_W_qunzi22,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi21,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi23,Bone_W_qunzi23,保留,裙子-W,PC2+PC1,0,0,Bone_W_qunzi22,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_W_qunzi_root,Bone_W_qunzi_root,保留,裙子-W,PC2+PC1,0,0,Bip001-Pelvis,PC2 独有 24 段，无权重（大摆裙预留）,高
+Bone_Weiqun00,Bone_Weiqun00,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun01,Bone_Weiqun01,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun02,Bone_Weiqun02,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun03,Bone_Weiqun03,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun04,Bone_Weiqun04,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun05,Bone_Weiqun05,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun06,Bone_Weiqun06,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun07,Bone_Weiqun07,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_Weiqun_zong,Bone_Weiqun_zong,保留,围裙,PC1,,0,,PC1 独有：Weiqun00-07 + _zong,高
+Bone_calf_l_1,Bone_calf_l_1,保留,变形辅助-腿,PC2+PC1,92,93,Bip001-L-Calf,小腿中间段，父级挂在 ひざ.* 上,高
+Bone_calf_l_2,Bone_calf_l_2,保留,变形辅助-腿,PC2+PC1,368,576,Bone_calf_l_1,小腿中间段，父级挂在 ひざ.* 上,高
+Bone_calf_r_1,Bone_calf_r_1,保留,变形辅助-腿,PC2+PC1,92,93,Bip001-R-Calf,小腿中间段，父级挂在 ひざ.* 上,高
+Bone_calf_r_2,Bone_calf_r_2,保留,变形辅助-腿,PC2+PC1,368,577,Bone_calf_r_1,小腿中间段，父级挂在 ひざ.* 上,高
+Bone_elbow_l_1,Bone_elbow_l_1,保留,变形辅助-臂,PC2+PC1,0,0,Bip001-L-Forearm,肘辅助,高
+Bone_elbow_l_2,Bone_elbow_l_2,保留,变形辅助-臂,PC2+PC1,3,0,Bip001-L-Forearm,肘辅助,高
+Bone_elbow_r_1,Bone_elbow_r_1,保留,变形辅助-臂,PC2+PC1,0,0,Bip001-R-Forearm,肘辅助,高
+Bone_elbow_r_2,Bone_elbow_r_2,保留,变形辅助-臂,PC2+PC1,3,0,Bip001-R-Forearm,肘辅助,高
+Bone_forearm_l_1,Bone_forearm_l_1,保留,变形辅助-臂,PC2+PC1,157,72,Bip001-L-Forearm,前臂中间段,高
+Bone_forearm_l_2,Bone_forearm_l_2,保留,变形辅助-臂,PC2+PC1,273,318,Bip001-L-Forearm,前臂中间段,高
+Bone_forearm_r_1,Bone_forearm_r_1,保留,变形辅助-臂,PC2+PC1,157,72,Bip001-R-Forearm,前臂中间段,高
+Bone_forearm_r_2,Bone_forearm_r_2,保留,变形辅助-臂,PC2+PC1,273,318,Bip001-R-Forearm,前臂中间段,高
+Bone_knee_l,Bone_knee_l,保留,变形辅助-腿,PC2+PC1,70,57,Bip001-L-Calf,膝盖辅助,高
+Bone_knee_r,Bone_knee_r,保留,变形辅助-腿,PC2+PC1,70,55,Bip001-R-Calf,膝盖辅助,高
+Bone_meimao00,Bone_meimao00,保留,面部驱动,PC2+PC1,32,88,Bone_meimao006,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao006,Bone_meimao006,保留,面部驱动,PC2+PC1,0,0,Bip001-Head,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao007,Bone_meimao007,保留,面部驱动,PC2+PC1,0,0,Bip001-Head,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao01,Bone_meimao01,保留,面部驱动,PC2+PC1,32,90,Bone_meimao006,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao02,Bone_meimao02,保留,面部驱动,PC2+PC1,32,72,Bone_meimao007,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao03,Bone_meimao03,保留,面部驱动,PC2+PC1,32,71,Bone_meimao007,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao04,Bone_meimao04,保留,面部驱动,PC2+PC1,40,124,Bone_meimao006,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_meimao05,Bone_meimao05,保留,面部驱动,PC2+PC1,40,122,Bone_meimao007,眉毛 6 根带权重 + 2 根父级，可做眉骨モーフ,高
+Bone_thigh_l_1,Bone_thigh_l_1,保留,变形辅助-腿,PC2+PC1,225,403,Bip001-L-Thigh,大腿中间段，父级挂在 足.* 上，随动,高
+Bone_thigh_l_2,Bone_thigh_l_2,保留,变形辅助-腿,PC2+PC1,202,255,Bone_thigh_l_1,大腿中间段，父级挂在 足.* 上，随动,高
+Bone_thigh_r_1,Bone_thigh_r_1,保留,变形辅助-腿,PC2+PC1,225,346,Bip001-R-Thigh,大腿中间段，父级挂在 足.* 上，随动,高
+Bone_thigh_r_2,Bone_thigh_r_2,保留,变形辅助-腿,PC2+PC1,202,255,Bone_thigh_r_1,大腿中间段，父级挂在 足.* 上，随动,高
+Bone_upperarm_l_1,Bone_upperarm_l_1,保留,变形辅助-臂,PC2+PC1,206,222,Bip001-L-UpperArm,上臂中间段，父级挂在 腕.* 上,高
+Bone_upperarm_l_2,Bone_upperarm_l_2,保留,变形辅助-臂,PC2+PC1,71,55,Bip001-L-UpperArm,上臂中间段，父级挂在 腕.* 上,高
+Bone_upperarm_r_1,Bone_upperarm_r_1,保留,变形辅助-臂,PC2+PC1,194,217,Bip001-R-UpperArm,上臂中间段，父级挂在 腕.* 上,高
+Bone_upperarm_r_2,Bone_upperarm_r_2,保留,变形辅助-臂,PC2+PC1,105,55,Bip001-R-UpperArm,上臂中间段，父级挂在 腕.* 上,高
+Root,全ての親,改名,核心人形,PC2+PC1,0,0,,原点，保持世界位置,高
+locator_ball_1,locator_ball_1,保留,挂点,PC2+PC1,0,0,Root,无权重参考点；不删也不改名的风险最低,高
+locator_body,locator_body,保留,挂点,PC1,,0,,无权重参考点；不删也不改名的风险最低,高
+locator_head,locator_head,保留,挂点,PC1,,0,,无权重参考点；不删也不改名的风险最低,高
+locator_left_foot,locator_left_foot,保留,挂点,PC2+PC1,0,0,Bip001-L-Foot,无权重参考点；不删也不改名的风险最低,高
+locator_left_hand,locator_left_hand,保留,挂点,PC2+PC1,0,0,Bip001-L-Hand,无权重参考点；不删也不改名的风险最低,高
+locator_pos,locator_pos,保留,挂点,PC2+PC1,0,0,Root,无权重参考点；不删也不改名的风险最低,高
+locator_right_foot,locator_right_foot,保留,挂点,PC2+PC1,0,0,Bip001-R-Foot,无权重参考点；不删也不改名的风险最低,高
+locator_right_hand,locator_right_hand,保留,挂点,PC2+PC1,0,0,Bip001-R-Hand,无权重参考点；不删也不改名的风险最低,高
+（无）,グルーブ,新建,PMX 新建,无,,,,センター 的子，位置同 センター；腰 挂到它下面,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,下半身,新建,PMX 新建,无,,,,腰 的子；成为 足.L/足.R 的父，否则标准动作的下半身/腿会脱节,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左足ＩＫ/右足ＩＫ,新建,PMX 新建,无,,,,IK 目标=左足首/右足首，链=ひざ→足 各 2 节,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左つま先ＩＫ/右つま先ＩＫ,新建,PMX 新建,无,,,,IK 目标=左つま先/右つま先，链=足首 1 节,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左肩P/右肩P,新建,PMX 新建,无,,,,肩的父骨（左肩挂到它下面）；动作里只出现 1 帧,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左腕捩/右腕捩,新建,PMX 新建,无,,,,手臂扭转：动作里 458/465 帧在动；付与给上臂中间段骨 0.5 / 1.0,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左手捩/右手捩,新建,PMX 新建,无,,,,手腕扭转：423/448 帧；付与给前臂中间段骨 0.5 / 1.0,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左足先EX/右足先EX,新建,PMX 新建,无,,,,脚掌转轴：428/424 帧；插在 足首 与 つま先 之间,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,左足D/左ひざD/左足首D/左つま先D（及右）,新建,PMX 新建,无,,,,佔位；本骨架的腿由 IK 直驱，D 骨轨（各 1 帧）无实际变形,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）
+（无）,両目/左目/右目,新建,PMX 新建,无,,,,视线骨：动作里 295 帧；眼球顶点改绑到 左目/右目,中（MMD 惯例，需在 PMXEditor 里核对骨名写法与父级）

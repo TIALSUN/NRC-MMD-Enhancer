@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "packaging": {
+    "bundle_game_files": false,
+    "runtime_assets_are_user_local": true,
+    "forbidden_extensions": [
+      ".pak",
+      ".ucas",
+      ".utoc",
+      ".uasset",
+      ".uexp",
+      ".ubulk",
+      ".glb",
+      ".gltf",
+      ".fbx",
+      ".obj",
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".tga",
+      ".exr"
+    ]
+  },
+  "nrc_runtime_required": [
+    "mmd/FASHION_ITEM_CONF.json",
+    "mmd/HEADWEAR_HAIR_CONF.json",
+    "mmd/HEADWEAR_TYPE_CONF.json",
+    "mmd/HEADWEAR_OFFSET_CONF.json",
+    "mmd/BAGWEAR_OFFSET_CONF.json",
+    "mmd/ITEM_TRANS_CONF.json",
+    "mmd/native-clothing-physics.json",
+    "mmd/expression-v1/PC1/SKM_PC1.glb",
+    "mmd/expression-v1/PC2/SKM_PC2.glb",
+    "mmd/eye-expression-v1/PC1/",
+    "mmd/eye-expression-v1/PC2/",
+    "public/chroma-assets/",
+    "public/chroma-icons/",
+    "public/chroma-data.json"
+  ],
+  "game_content_patterns": {
+    "configs": [
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/FASHION_ITEM_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/FASHION_SUITS_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/SALON_ITEM_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/CLOSET_TAB_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/HEADWEAR_*",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/BAGWEAR_OFFSET_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/ITEM_TRANS_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/COLOR_RANDOM_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/FASHION_GLASS_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/HIDDEN_GLASS_CONF",
+      "NRC/Content/ScriptC/Data/Bin/BinDataCompressed/SEASON_CONF"
+    ],
+    "characters": [
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC1/SKM_PC1.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC2/SKM_PC2.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC1/Avatar/**/*.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC2/Avatar/**/*.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC1/Animation/Pose_biaoqing/*.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC2/Animation/Pose_biaoqing/*.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC1/ABP_CharacterBase_New.uasset",
+      "NRC/Content/ArtRes/AnimSequence/Human/PC/PC2/ABP_CharacterBase*.uasset"
+    ],
+    "chroma": [
+      "NRC/Content/NewRoco/Modules/System/Appearance/Raw/**/*",
+      "NRC/Content/ShaderArchive-NRC-PCD3D_ES31.ushaderbytecode"
+    ]
+  },
+  "expected_runtime_roots": [
+    "dataRoot",
+    "modelRoot",
+    "mmdMorphRoot",
+    "mmdOutDir",
+    "mmdBlender"
+  ],
+  "limits": [
+    "The package must not embed decoded game tables or exported game meshes/textures.",
+    "A current client, authorized key when encrypted assets are read, and a compatible parser are runtime inputs."
+  ]
+}

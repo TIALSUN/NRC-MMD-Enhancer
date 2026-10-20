@@ -1,0 +1,12 @@
+{
+  "name": "nrc-closet-viewer",
+  "version": "1.0.0",
+  "description": "Unofficial NRC MMD enhancement based on the original NRC Closet Viewer",
+  "author": "SparseShadow",
+  "license": "GPL-3.0-or-later",
+  "main": "electron/main.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "three": "0.170.0"
+  }
+}

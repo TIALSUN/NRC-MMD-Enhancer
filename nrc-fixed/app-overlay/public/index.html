@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NRC 服装预览工具 (v1.0.0)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── 顶部栏 ── -->
+    <header id="header">
+      <span class="title">NRC 服装预览工具 (v1.0.0) By 疏影</span>
+      <div class="gender-toggle">
+        <button class="gender-btn active" data-gender="1">男洛克</button>
+        <button class="gender-btn"        data-gender="2">女洛克</button>
+      </div>
+      <div id="suit-preview-toggle" class="gender-toggle hidden" role="group" aria-label="套装预览样式">
+        <button class="suit-preview-btn active" type="button" data-preview-mode="gray" aria-pressed="true">灰模</button>
+        <button class="suit-preview-btn" type="button" data-preview-mode="pose" aria-pressed="false">上身图</button>
+      </div>
+      <div class="search-wrap">
+        <input id="search" type="text" placeholder="搜索名称 / ID…">
+      </div>
+
+      <label class="slider-ctrl" title="卡片大小">
+        <span>⊞</span>
+        <input id="card-size-slider" type="range" min="80" max="200" value="100" step="10">
+      </label>
+
+      <button id="settings-btn" type="button">设置</button>
+
+    </header>
+
+    <div id="main">
+
+      <!-- ── 左侧一级 Tab 栏 ── -->
+      <nav id="sidebar">
+        <!-- 由 JS 渲染 -->
+      </nav>
+
+      <!-- ── 右侧内容区 ── -->
+      <div id="content">
+
+        <!-- 二级 Tab 横排 -->
+        <div id="subtabs">
+          <!-- 由 JS 渲染 -->
+        </div>
+
+        <!-- 三级：颜色选择条（仅发型/妆容有多色时出现）-->
+        <div id="colorpicker" class="hidden">
+          <div id="colorpicker-label"></div>
+          <div id="colorpicker-swatches"></div>
+        </div>
+
+        <!-- 物品网格 -->
+        <div id="grid-wrap">
+          <div id="grid">
+            <!-- 由 JS 渲染 -->
+          </div>
+          <div id="grid-empty" class="hidden">暂无数据</div>
+        </div>
+
+      </div>
+
+      <!-- ── 右侧列（已选面板 + 3D预览）── -->
+      <div id="right-col">
+        <div id="right-resizer" title="拖拽调整侧栏宽度"></div>
+
+        <!-- 已选面板 -->
+        <aside id="selected-panel">
+          <h3>已选服装</h3>
+          <div id="selected-list">
+            <!-- 由 JS 渲染 -->
+          </div>
+          <div class="selected-actions">
+            <button id="export-btn">导出 JSON</button>
+            <button id="mmd-export-btn" title="导出当前角色与服装，保留服装权重骨；启用炫彩时同时生成动态 Blender 场景">导出 MMD</button>
+            <button id="clear-btn">清空</button>
+          </div>
+          <div id="mmd-status" class="hidden" role="status">
+            <span id="mmd-status-text"></span>
+            <button id="mmd-reveal-btn" type="button" class="hidden">打开文件夹</button>
+          </div>
+        </aside>
+
+        <div id="preview-resizer" title="拖拽调整预览高度"></div>
+
+        <!-- 3D 预览面板 -->
+        <div id="preview-panel">
+          <section id="chroma-controls" aria-label="服装炫彩配色">
+            <div class="chroma-head">
+              <div class="gender-toggle" role="group" aria-label="服装配色模式">
+                <button class="chroma-mode-btn active" type="button" data-chroma-mode="original" aria-pressed="true">原色</button>
+                <button class="chroma-mode-btn" type="button" data-chroma-mode="chroma" aria-pressed="false" disabled>炫彩</button>
+              </div>
+              <span id="chroma-label">原色</span>
+            </div>
+            <div id="chroma-swatches" class="hidden" role="group" aria-label="炫彩配色选项"></div>
+            <div id="chroma-hint" role="status">请选择支持炫彩的服装</div>
+          </section>
+          <div id="preview-canvas-wrap">
+            <canvas id="preview-canvas"></canvas>
+          </div>
+
+          <div id="preview-status"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <footer id="footer-note">
+      作者：疏影
+      　
+      B站：<a href="https://space.bilibili.com/35970397" target="_blank" rel="noopener noreferrer">浅草疏影</a>
+      　 
+      GitHub：<a href="https://github.com/SparseShadow2024" target="_blank" rel="noopener noreferrer">Sparse Shadow</a>
+    </footer>
+  </div>
+
+  <div id="settings-modal" class="settings-modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="settings-dialog">
+      <div class="settings-head">
+        <h2 id="settings-title">本地路径设置</h2>
+        <button id="settings-close" type="button">×</button>
+      </div>
+
+      <div class="settings-body">
+        <div class="settings-field">
+          <span>数据表目录 [dataRoot]</span>
+          <textarea id="setting-dataRoot" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>服装图标目录 [iconRoot]</span>
+          <textarea id="setting-iconRoot" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>套装图目录 [suitsRoot]</span>
+          <textarea id="setting-suitsRoot" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>UI 帧图目录 [framesRoot]</span>
+          <textarea id="setting-framesRoot" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>模型目录 [modelRoot]</span>
+          <textarea id="setting-modelRoot" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field compact">
+          <span>端口 [port]</span>
+          <input id="setting-port" type="number" min="1" max="65535" spellcheck="false">
+        </div>
+        <div class="settings-field">
+          <span>Blender 程序 [mmdBlender]</span>
+          <textarea id="setting-mmdBlender" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>MMD 输出目录 [mmdOutDir]</span>
+          <textarea id="setting-mmdOutDir" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>MMD 带表情模型库 [mmdMorphRoot]</span>
+          <textarea id="setting-mmdMorphRoot" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="settings-field">
+          <span>MMD 骨名体系 [mmdNaming]</span>
+          <select id="setting-mmdNaming">
+            <option value="miku">Miku 式（左腕 / 左ひじ）</option>
+            <option value="suffix">后缀式（腕.L / ひじ.L）</option>
+          </select>
+        </div>
+        <div class="settings-field">
+          <span>MMD 物理（裙摆/头发/背包刚体）[mmdPhysics]</span>
+          <select id="setting-mmdPhysics">
+            <option value="on">开（默认）</option>
+            <option value="off">关</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="settings-status"></div>
+
+      <div class="settings-actions">
+        <button id="settings-reload" type="button">重新读取</button>
+        <button id="settings-save" type="button">保存并刷新</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="disclaimer-modal" class="disclaimer-modal hidden" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
+    <div class="disclaimer-dialog">
+      <div class="disclaimer-head">
+        <h2 id="disclaimer-title">免责声明</h2>
+      </div>
+
+      <div id="disclaimer-content" class="disclaimer-content">
+        <p>1. 本工具仅用于本地资源预览、个人学习、技术研究和资产整理辅助，不提供任何游戏资源、商业素材或第三方版权内容。</p>
+        <p>2. 使用者需要自行确认本地资源来源合法，并遵守相关游戏、平台、素材、模型、贴图、音频、字体及其他文件的版权协议、用户协议和使用限制。</p>
+        <p>3. 本工具不会主动上传、分发、售卖或公开传播用户本地文件。导出 JSON 仅为本地路径和资源清单，是否用于二次处理，由使用者自行判断并承担责任。</p>
+        <p>4. 请勿使用本工具从事侵犯版权、规避授权、传播未授权资产、商业倒卖、恶意分析、破坏服务或其他违反法律法规及平台规则的行为。</p>
+        <p>5. 项目作者不对使用者的本地资源、路径配置、导出结果、二次处理结果、插件导入结果、数据损坏、文件丢失、版权纠纷或由使用本工具造成的任何直接或间接后果承担责任。</p>
+        <p>继续使用即表示你已阅读并理解以上内容，并同意自行承担使用本工具产生的全部风险。</p>
+      </div>
+
+      <div class="disclaimer-actions">
+        <span id="disclaimer-hint">请完整阅读后确认</span>
+        <button id="disclaimer-confirm" type="button" disabled>我已阅读并同意</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/vendor/three/build/three.module.min.js",
+      "three/addons/": "/vendor/three/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="preview.js"></script>
+  <script type="module" src="chroma-ui.mjs"></script>
+</body>
+</html>
