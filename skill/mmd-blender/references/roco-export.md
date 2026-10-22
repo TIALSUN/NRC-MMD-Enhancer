@@ -42,3 +42,15 @@ PMX 最多四个非零骨权重。身体与衣服采用协调的扭转场，合�
 导出衣服时保留服装实际使用的骨骼、父级和顶点权重。转换 report 写 `clothing_bones_summary.weighted/added`；NRC 完成任务的 `result.boneSummary` 同时返回骨骼总数、保留权重骨数、服装权重骨清单和服装新增骨清单，界面完成提示显示“骨骼 / 服装骨 / 新增”。该摘要来自 Blender 实际转换报告，不是前端估算。
 
 修改从当前安装版提取 app，保留累计功能；新资源同步加入 `MMD_TOOL_FILES`。验证空选择、显式服装、眼型、妆容、输出隔离与缺失资源报告。候选通过后仍需实际安装服务导出，见 validation-delivery.md。
+
+
+## 兼容性规则（2026-10-22 累计）
+
+- 未实装物品（配置存在但库中只有材质/贴图、没有网格）跳过并写 `items_skipped`，不中断整次导出；套装含此类部件时同样处理。
+- 性别不符（物品 gender 1/2 与导出角色不一致）跳过并记录；包挂饰/法杖等 gender 3 不限制。
+- `type_name` 与网格槽位冲突时以槽位为准：`帽子` 但资源在 `Hi` 按头饰处理，report 记 `mesh_slot` 与 `reclassified_from`。禁止按“帽子”语义强行切 Ht 发型。
+- 肤色 `3000000N` 推导脸皮/身体贴图，缺图才回退并写 `skin_fallback`；发色贴图找不到规范文件名时按色号材质 BaseTex 回退。
+- 头部饰品 Fi/Hi/Ms/Hg/Hp 挂 `Bip001-Head`，不借用 WearType0 偏移；Fi/Hi 做 ≤8mm 前向 clearance。
+- 帽子/头饰的 HEADWEAR 偏移只对基础发型定义，Ht 发型不参与查表；普通蒙皮帽子（SKM/Ht）走骨权重。
+
+完整清单、数量与已知限制见 [compatibility.md](compatibility.md)。

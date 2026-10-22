@@ -9,6 +9,8 @@ const DEFAULT_CONFIG_PATH = path.join(__dirname, 'config.json');
 const DEFAULT_PUBLIC_ROOT = path.join(__dirname, 'public');
 const DEFAULT_PROJECT_ROOT = __dirname;
 const NAME_UNSAFE = /[\\/:*?"<>|\s]+/g;
+// 动态炫彩：未烘焙底纹的衍生配色沿用预览器 getChromaPattern 的默认底纹。
+const DEFAULT_CHROMA_PATTERN = '/chroma-assets/Tex_PetGlassy_007_D.png';
 
 // MMD 导出：Blender 可执行文件与输出目录，写进用户配置后由设置界面修改。
 const MMD_DEFAULTS = {
@@ -217,6 +219,16 @@ function createApp(options = {}) {
       const color = Number(request[field] ?? 1);
       args.push(flag, String(Number.isInteger(color) && color >= 1 && color <= 5 ? color : 1));
     }
+    // 沙龙选项：发型造型 / 瞳孔 / 肤色 / 面妆。转换器按 avatar/贴图编号解析，缺资源时忽略或报错。
+    for (const [field, flag] of [
+      ['hairAvatarId', '--hair-avatar-id'],
+      ['pupilAvatarId', '--pupil-texture-id'],
+      ['skinAvatarId', '--skin-avatar-id'],
+      ['makeupAvatarId', '--makeup-avatar-id'],
+    ]) {
+      const value = Number(request[field]);
+      if (Number.isInteger(value) && value > 0) args.push(flag, String(value));
+    }
     if (request.dynamicRecipe) args.push('--dynamic-chroma', request.dynamicRecipe);
     if (config.mmdPhysics !== 'off') args.push('--physics');
     for (const item of request.items) args.push('--item', String(item));
@@ -255,7 +267,8 @@ function createApp(options = {}) {
     fs.mkdirSync(outDir, { recursive: true });
     const toolsDir = prepareMmdTools(outDir);
     const character = gender === 1 ? 'PC1' : 'PC2';
-    const name = String(body.name || `NRC-MMD-${Date.now()}`).replace(NAME_UNSAFE, '_').slice(0, 80) || `NRC-MMD-${Date.now()}`;
+    // 名字同时用于文件夹与 PMX 文件名：限制长度，避免 Blender 文件浏览器选不中/路径过长。
+    const name = String(body.name || `NRC-MMD-${Date.now()}`).replace(NAME_UNSAFE, '_').replace(/_+$/g, '').slice(0, 60) || `NRC-MMD-${Date.now()}`;
     // 每次导出单独一个文件夹，PMX 与它的贴图（Blender 会写在同级的 Tex\ 下）放在一起
     let exportDir = path.join(outDir, name);
     for (let suffix = 2; fs.existsSync(exportDir); suffix++) exportDir = path.join(outDir, `${name}-${suffix}`);
@@ -284,7 +297,7 @@ function createApp(options = {}) {
         const target = path.join(assets,path.basename(source)); fs.copyFileSync(source,target);
         return path.relative(exportDir,target).replaceAll('\\','/');
       };
-      dynamicPreset.pattern = copy(dynamicPreset.pattern);
+      dynamicPreset.pattern = copy(dynamicPreset.pattern || DEFAULT_CHROMA_PATTERN);
       if (dynamicPreset.ornament?.texture) dynamicPreset.ornament.texture = copy(dynamicPreset.ornament.texture);
       dynamicRecipe = path.join(exportDir, '炫彩参数.json');
       fs.writeFileSync(dynamicRecipe,JSON.stringify({version:1,preset:dynamicPreset,materials:data.materials,model_root:exportRoot},null,2));
@@ -314,7 +327,10 @@ function createApp(options = {}) {
         catch { /* Artifact paths remain usable even if the optional report cannot be read. */ }
       } else {
         job.status = 'error';
-        job.message = code === 0 && dynamicRecipe ? '动态炫彩场景未生成，请查看导出日志' : `Blender 退出码 ${code}`;
+        const detail = String(job.log || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean).slice(-1)[0] || '';
+        job.message = code === 0 && dynamicRecipe
+          ? '动态炫彩场景未生成，请查看导出日志'
+          : `Blender 退出码 ${code}${detail ? '：' + detail.slice(-160) : ''}`;
       }
     });
     return job;

@@ -1,1 +1,7 @@
 Skill is valid!
+
+# 2026-10-22 更新验证
+overlay 与安装版一致：mmd/roco-to-mmd.py 463703599ac6、mmd/dynamic-chroma.py 0d769204847f、public/app.js dea6f28e6fa2、server.js c616e90854bc。
+PMX 回读（scripts/pmx_verify.py，58 项）：test-suit189-20261022.pmx → 56 pass + 2 info，0 warn / 0 fail；顶点 14337 / 三角 19606 / 材质 15 / 骨 269 / 表情 106 / 刚体 15 / 关节 2。
+VMD 动作（scripts/vmd-motion-test.py，IRIS OUT.vmd 500 帧）：骨通道 76/76、表情通道 42/42 命中；刚体 15、物理驱动骨 2；5 个采样帧无 NaN、顶点数恒定 14337。
+兼容性普查：1724 物品（resolved 1674 / 未实装 50）、沙龙 346、套装 256、反向缺口 157；动态导出 23 次全部 done。

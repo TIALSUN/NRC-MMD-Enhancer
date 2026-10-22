@@ -146,7 +146,7 @@ def build_scene(pmx_file, recipe_file):
     bpy.ops.mmd_tools.import_model(filepath=str(pmx),scale=0.08,clean_model=True,remove_doubles=False,fix_ik_links=True)
     scene=bpy.context.scene;scene.render.fps=30;scene.render.fps_base=1
     scene.frame_start=1;scene.frame_end=120
-    changed=[];portable={}
+    changed=[];portable={};skipped=[]
     for material in list(bpy.data.materials):
         name=getattr(getattr(material,'mmd_material',None),'name_j','') or material.name
         entry=material_map.get(name.lower())
@@ -156,7 +156,9 @@ def build_scene(pmx_file, recipe_file):
         if not mask.is_absolute():mask=folder/mask
         if not mask.is_file():raise FileNotFoundError(f'Chroma mask missing: {mask}')
         base=next((n.image for n in material.node_tree.nodes if n.type=='TEX_IMAGE' and n.image and n.name=='mmd_base_tex'),None)
-        if base is None:raise ValueError(f'No diffuse texture for {name}')
+        if base is None:
+            skipped.append(name)
+            continue
         target=folder/'Chroma'/mask.name;target.parent.mkdir(exist_ok=True)
         if mask.resolve()!=target.resolve():shutil.copy2(mask,target)
         mask_image=bpy.data.images.load(str(target),check_existing=True);mask_image.colorspace_settings.name='Non-Color'
@@ -180,4 +182,4 @@ def build_scene(pmx_file, recipe_file):
     blend=pmx.with_name(pmx.stem+'-动态炫彩.blend')
     bpy.ops.wm.save_as_mainfile(filepath=str(blend))
     (folder/'动态炫彩-使用说明.txt').write_text('打开同目录的动态炫彩.blend，播放或拖动时间轴查看效果。默认30fps，1—120帧。\n通过MMD Tools导入VMD后仍按场景帧率驱动；物理需另从静止缓冲帧构建并烘焙。\nPMX本身保留原色，不执行Blender节点。贴图已pack，Chroma与炫彩参数.json保留便于编辑。\n光泽是Blender近似，未复原UE折射和完整游戏shader。\n',encoding='utf-8')
-    return {'revision':1,'blend':str(blend),'preset':preset['id'],'materials':changed,'packed':True,'fps':30,'limits':recipe['limits']}
+    return {'revision':1,'blend':str(blend),'preset':preset['id'],'materials':changed,'skipped_materials':sorted(skipped),'packed':True,'fps':30,'limits':recipe['limits']}

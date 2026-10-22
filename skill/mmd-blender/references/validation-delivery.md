@@ -38,3 +38,11 @@ Blender/MMD Tools 与 MikuMikuDance.exe 分开报告。无光照原贴图画面�
 当前代码覆盖层包含统一“导出 MMD”入口、服装骨摘要、原生衣料物理和 WeiBa 稳定性策略。安装前记录基础与候选 ASAR 哈希，备份只增不删。
 
 历史覆盖统计、动作样本和验证结果只能作为测试选择依据；当前客户端、当前装机版和实际导出报告才是验收依据。Blender/MMD Tools 与 MikuMikuDance.exe 始终分开报告。
+
+
+## PMX 回读与动作测试
+
+- 独立 PMX 验证：`python scripts/pmx_verify.py <pmx> [--report <report.json>]`（或 `--batch <root>` 批量）。58 项检查覆盖文件头/字节完整性、数量、材质贴图存在与大小写、texture_index、骨骼/IK、表情、物理、网格退化与 report 一致性；要求 0 fail，warn 逐条确认原因。该验证器不依赖 Blender，可在导出机上直接跑。
+- VMD 动作测试：`blender -b -noaudio --factory-startup --python scripts/vmd-motion-test.py -- --pmx <pmx> --vmd <vmd> --out <dir> [--png --frames 1,60,120,240,400]`。默认带物理逐帧步进，报告 driven bones / driven morphs 命中与缺失、刚体数、逐帧顶点数/非有限值/包围盒；`--png` 同时渲染采样帧。
+- 动作结论仍按“Blender/MMD Tools ≠ MikuMikuDance.exe”分开报告；骨名和表情命中率高不代表姿势与物理一定正确，需要采样帧视觉确认。
+- 渲染采样帧时若材质使用 254/255 纹理 alpha，EEVEE 的随机透明会产生噪点；`vmd-motion-test.py --png` 已把 alpha 取整，其他自写渲染脚本同理处理，不能用噪点判断模型缺陷。

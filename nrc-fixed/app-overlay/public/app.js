@@ -1,4 +1,4 @@
-﻿// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  NRC 服装预览工具  —  app.js
 // ════════════════════════════════════════════════════════════
 
@@ -1335,9 +1335,10 @@ let mmdPollTimer = null;
 function mmdSelectedItems() {
   const ids = [];
   for (const entry of Object.values(state.selected)) {
-    const id = entry?.item?.id;
-    if (id == null) continue;
-    if (!ids.includes(String(id))) ids.push(String(id));
+    const item = entry?.item;
+    if (!item || item.id == null) continue;
+    if (!item.type_name) continue;  // 沙龙选项（发型/肤色/眉/睫毛/瞳孔/贴花）走独立参数，不是服装物品
+    if (!ids.includes(String(item.id))) ids.push(String(item.id));
   }
   return ids;
 }
@@ -1350,8 +1351,11 @@ function buildMmdName(items) {
     const name = String(entry.item.name || '').trim();
     if (name && !names.includes(name)) names.push(name);
   }
-  const base = names.length ? names.join('_') : items.join('_');
-  return `PC${state.gender}-${base || Date.now()}`;
+  // 文件夹名会同时作为 PMX 文件名：名字太长在 Blender 文件浏览器里难选，也容易碰到路径长度限制。
+  // 保留前 3 个物品名 + 总数，剩余用“等 N 件”。
+  const shortNames = names.length > 3 ? [...names.slice(0, 3), `等${names.length}件`] : names;
+  const base = shortNames.length ? shortNames.join('_') : items.join('_');
+  return `PC${state.gender}-${String(base || Date.now()).slice(0, 56)}`;
 }
 
 function setMmdStatus(message, type = '', path = null) {
@@ -1412,7 +1416,11 @@ async function exportMmd() {
         chromaPatternTexture: dynamicChroma ? chromaPreset.ornament?.texture : undefined,
         hairColor: Number(state.selected.salon_1?.item?.texture_id) || 1,
         eyeAvatarId: Number(state.selected.salon_3?.item?.avatar_id) || undefined,
-        browColor: Number(state.selected.salon_2?.item?.texture_id) || 1 }),
+        browColor: Number(state.selected.salon_2?.item?.texture_id) || 1,
+        hairAvatarId: Number(state.selected.salon_1?.item?.avatar_id) || undefined,
+        pupilAvatarId: Number(state.selected.salon_4?.item?.avatar_id) || undefined,
+        skinAvatarId: Number(state.selected.salon_undefined?.item?.avatar_id) || undefined,
+        makeupAvatarId: Number(state.selected.salon_5?.item?.avatar_id) || undefined }),
     });
     if (!res.ok) throw new Error((await res.text()).trim() || `导出请求失败：${res.status}`);
     const { jobId } = await res.json();

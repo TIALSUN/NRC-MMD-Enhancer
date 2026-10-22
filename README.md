@@ -1,35 +1,42 @@
 # NRC MMD 修复版与 mmd-blender 技能
 
-一个面向《洛克王国：世界》NRC 服装预览工具的非官方 MMD 导出增强项目。项目提供 NRC 代码修复覆盖层和 `mmd-blender` 技能，用于从用户本机资源生成 PMX、动态炫彩 Blender 场景、动作验证和舞蹈视频。
+发布内容只有程序代码、技能说明、测试和获取清单，不包含游戏文件。
 
-> 原项目：**NRC 服装预览工具**  
-> 原作者：**浅草疏影（Sparse Shadow）**  
-> 本项目为非官方修改版，不代表原作者认可或维护。
+## 目录
 
-## 功能
+- `skill/mmd-blender/`：完整技能副本，包含游戏资源自动发现、必需资源清单、MMD 转换、物品解析与兼容规则、服装骨骼摘要、WeiBa 物理策略、炫彩、PMX 回读验证、VMD 动作测试和视频编码说明。
+- `nrc-fixed/app-overlay/`：修复版 NRC 代码覆盖层。
+- `nrc-fixed/apply.ps1`：把覆盖层应用到用户已有 NRC，或安装到本机。
+- `nrc-fixed/patch.mjs` 与 `tools/`：本地 ASAR 解包、重打包、回读校验工具。
 
-- 统一“导出 MMD”按钮：原色生成 PMX，炫彩同时生成 PMX、参数、贴图和动态 `.blend`。
-- 保留服装实际使用的骨骼、父级和四权重，并在 NRC 显示“骨骼 / 服装骨 / 新增骨”摘要。
-- 原生衣服弹簧骨与 MMD 刚体近似，`WeiBa` 保留骨骼和权重但不自动建刚体，避免舞摆被错误甩开。
-- 原生 Morph、表情、口型、眼型、眼骨、足 IK/D/EX 与 MMD 标准骨。
-- PMX 干净回读、真实 VMD 驱动、逐帧物理烘焙、MP4 编码和全片解码验证。
-- 技能可从本机当前客户端发现并获取所需配置、网格、贴图、Morph 和物理数据。
+## 2026-10-22 更新
 
-## 不包含游戏文件
+- 兼容性普查：1724 件物品 / 346 项沙龙 / 256 套套装 / 157 个反向缺口；静态规则与 142 份真实导出报告交叉验证 0 不一致，动态导出 23 次全部通过。
+- 物品解析修正：
+  - 未实装物品（只有材质没有网格，50 件 / 7 套）不再让整次导出失败，改为跳过并写 `items_skipped`；
+  - 肤色 30000005/6/8 按 `3000000N` 规则推导（此前静默回退默认肤色）；
+  - 发色贴图文件名不规范时按色号材质 BaseTex 回退（修复 20101301 的 4 号色）；
+  - 性别不符的物品跳过并记录，避免错误拼接；
+  - `type_name` 与网格槽位冲突时以槽位为准（12108501 帽子资源落在 Hi，按头饰处理；硬切戴帽发型会悬空或掉脖子）。
+- 帽子/头饰：HEADWEAR 偏移只对基础发型定义（1414 条配对 0 条引用 Ht 发型），静态头饰不切 Ht 发型；普通蒙皮帽子不受影响。
+- 技能新增 `references/compatibility.md`、`scripts/pmx_verify.py`（58 项 PMX 回读，不依赖 Blender）、`scripts/vmd-motion-test.py`（骨/表情覆盖、物理与采样渲染）。
+- 代码覆盖层同步到当前安装版（`mmd/roco-to-mmd.py`、`mmd/dynamic-chroma.py`、`public/app.js`、`server.js`）。
 
-本仓库不包含 Pak、`.uasset`、`.uexp`、GLB/glTF、游戏贴图、解码配置、着色器、动作或音频。
+## 为什么不直接提供带模型的完整 NRC
 
-首次使用时：
+游戏模型、贴图、配置解码结果、着色器和 Pak 属于游戏资源。本 ZIP 明确不包含这些文件。
 
-1. 用 `skill/mmd-blender/scripts/detect-runtime.ps1` 发现游戏、解析器、Blender、NRC 和配置根。
-2. 按 `skill/mmd-blender/references/required-assets.json` 从本机当前客户端获取资源。
-3. 用 `skill/mmd-blender/scripts/check-assets.ps1` 检查运行时资源。
-4. 用 `nrc-fixed/apply.ps1` 从已有 NRC 基础包生成或安装修复版 ASAR。
+技能首次运行会：
 
-## 快速开始
+1. 用 `scripts/detect-runtime.ps1` 发现游戏、解析器、Blender、NRC 和配置根。
+2. 按 `references/required-assets.json` 从用户本机当前客户端取得资源。
+3. 用 `scripts/check-assets.ps1` 检查 NRC 运行时资源完整性。
+4. 从用户已有 NRC 基础包提取完整应用，再套用代码修复。
+
+## 快速使用
 
 ```powershell
-# 生成用户本机修复版 ASAR
+# 仅生成用户本机的修复版 ASAR
 .\nrc-fixed\apply.ps1 `
   -BaseAsar "E:\NRC服装预览工具-修复版\resources\app.asar" `
   -OutputAsar ".\NRC-mmd-fixed.asar"
@@ -38,28 +45,17 @@
 .\nrc-fixed\apply.ps1 `
   -BaseAsar "E:\NRC服装预览工具-修复版\resources\app.asar" `
   -InstallRoot "E:\NRC服装预览工具-修复版" -Install
+
+# 检查基础包是否已有全部游戏运行时资源
+.\skill\mmd-blender\scripts\check-assets.ps1 `
+  -NrcRoot "E:\NRC服装预览工具-修复版\resources\app" # 若已解包
 ```
 
-更完整的资源获取流程见 [skill/mmd-blender/references/asset-acquisition.md](skill/mmd-blender/references/asset-acquisition.md)。
+权限、游戏版本和授权要求由用户环境决定；没有客户端、解析器或授权密钥时，技能会报告具体缺失项，不会把旧游戏资源冒充当前版本。
 
-## 环境
+## 验证
 
-- Windows、Node.js 22+。
-- 已安装 NRC 服装预览工具基础包。
-- Blender 5.2 LTS 与 MMD Tools 4.5.14。
-- 读取加密客户端的授权条件、兼容解析器和必要 Schema；或已从当前客户端导出的资源。
-- FFmpeg 仅在编码视频时需要。
-
-## 验证范围
-
-已验证 PC1/PC2 默认、PC2 连衣和 PC1 黑白炫彩的代表导出；PMX 回读确认服装权重骨、表情、贴图、衣料物理和无 WeiBa 自动刚体。IRIS OUT 代表动作验证为 465 帧、30fps、15.5 秒，并完成全片视频解码。
-
-Blender/MMD Tools 通过不等于 MikuMikuDance.exe 全动作实机通过。不同客户端、服装搭配、动作和插件组合仍需单独复核。
-
-## 许可与署名
-
-- 修改版代码与文档：**GPL-3.0-or-later**，见 [LICENSE](LICENSE)。
-- 原作者：**浅草疏影（Sparse Shadow）**，见 [NOTICE.md](NOTICE.md)。
-- 使用前请阅读 [DISCLAIMER.md](DISCLAIMER.md)。
-
-GPL-3.0 不授予任何游戏素材、角色、商标、动作或音乐的使用权。
+- 代表导出：套装 189 全套（含 12108501 归类修正）PMX 2.6MB、顶点 14337、材质 15、骨 269、表情 106、刚体 15、关节 2。
+- PMX 回读：58 项检查 56 pass + 2 info，0 warn / 0 fail。
+- VMD 动作：IRIS OUT 500 帧，骨通道 76/76、表情通道 42/42 全部命中，物理正常步进，无 NaN，采样帧渲染无爆点/破面。
+- 兼容性数据与规则见 `skill/mmd-blender/references/compatibility.md`。

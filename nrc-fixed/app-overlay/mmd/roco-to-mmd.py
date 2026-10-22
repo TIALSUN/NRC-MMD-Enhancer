@@ -15,6 +15,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 import sys
 from pathlib import Path
@@ -191,6 +192,14 @@ def parse_args():
     parser.add_argument("--no-textures", action="store_true")
     parser.add_argument("--hair-color", type=int, choices=range(1, 6), default=1)
     parser.add_argument("--brow-color", type=int, choices=range(1, 6), default=1)
+    parser.add_argument("--hair-avatar-id", type=int, default=None,
+                        help="沙龙发型 avatar_id；按预览器规则推导发型网格（Hr/Ht）并替换默认发型")
+    parser.add_argument("--pupil-texture-id", type=int, default=None,
+                        help="瞳孔贴图编号（PC_Es/Tex/T_PC_Es_<id>.png，例如 34000002）")
+    parser.add_argument("--skin-avatar-id", type=int, default=None,
+                        help="肤色 avatar_id（30000001/30000002/30000003/30000007）；替换 Et 脸皮与 By 身体皮肤贴图")
+    parser.add_argument("--makeup-avatar-id", type=int, default=None,
+                        help="面妆 avatar_id（15000015/25000015）；把 Avatar/Mp 面妆贴图按 alpha 叠到脸皮")
     parser.add_argument("--no-ik", action="store_true")
     parser.add_argument("--keep-native-arm-weights", action="store_true", help="保留原生辅助骨权重，用于接触修正对照")
     parser.add_argument("--no-eye-rewire", action="store_true",
@@ -199,7 +208,7 @@ def parse_args():
                         help="骨名体系：miku=左腕/左ひじ（默认），suffix=腕.L/ひじ.L")
     parser.add_argument("--physics", action="store_true",
                         help="生成 MMD 刚体与关节（裙摆 / 头发 / 背包）")
-    parser.add_argument("--knee-limit", action="store_true", help="给 ひざ 加 X 轴 IK 限制（默认不加）")
+    parser.add_argument("--knee-limit", action="store_true", help="兼容旧参数；启用 IK 时默认应用标准膝盖限制")
     parser.add_argument("--arm-pose", choices=("a", "t"), default="a",
                         help="静止手臂姿势：a=保留模型的 A 字下垂（默认，与 MMD 惯例一致，"
                              "网格和骨本来就在这个姿势下对齐）；t=把手臂摆平（会把姿势烘进网格）")
@@ -453,6 +462,106 @@ def resolve_headwear_fit(headwear, hair, tables):
     return {'bone':info['BoneName'],'wear_type':wear_type,'base':info['offset'],'extra':pair.get('Offset',[])[index] if index>=0 else None}
 
 
+def head_attachment_anchor(part, armature, report):
+    """头部静态/局部骨架附件（头饰/面饰/帽子等）的锚点：优先 HEADWEAR 偏移表，否则头骨。"""
+    slot = Path(part['mesh']).parent.parent.name
+    bone_name = 'Bip001-Head' if slot in {'Hi', 'Fi', 'Ms', 'Hg', 'Hp', 'Ht'} else None
+    if bone_name is None or bone_name not in armature.data.bones:
+        raise RuntimeError(f'Static attachment requires verified anchor/offset: {part["id"]} {slot}')
+    tables = globals().get('_HEADWEAR_TABLES')
+    if tables is None:
+        tables = {}
+        for table in ('HEADWEAR_TYPE_CONF', 'HEADWEAR_HAIR_CONF', 'HEADWEAR_OFFSET_CONF'):
+            source = Path(__file__).with_name(table + '.json')
+            tables[table] = list(json.loads(source.read_text(encoding='utf-8-sig')).get('RocoDataRows', {}).values()) if source.is_file() else []
+        globals()['_HEADWEAR_TABLES'] = tables
+    hair_path = report.get('headwear_hair', {}).get('model') or report.get('hair_mesh')
+    if hair_path:
+        hair_name = Path(hair_path).stem
+    else:
+        body = next(o for o in armature.children if o.type == 'MESH')
+        hair_match = next((MATERIAL_PATTERN.match(SUFFIX_PATTERN.sub('', m.name)) for m in body.data.materials if m and material_token(m.name) == 'Hr'), None)
+        who = Path(armature['nrc_body_source']).parent.name
+        hair_slot = 'Hr_Ht' if report.get('desired_has_hat') else 'Hr'
+        hair_name = f'SKM_{who}_{hair_slot}_{hair_base_id(hair_match.group(3))}' if hair_match else ''
+    # 面饰/口罩/头套在 HEADWEAR 三表里没有配置记录；游戏（预览工具）对这些槽位
+    # 直接挂在头骨 socket 上，不借用“当前发型无头饰(WearType0)”的偏移，否则
+    # 佩戴位置会随发型/性别漂移（PC1 圆框眼镜因此比 PC2 低且更贴脸）。
+    fit = resolve_headwear_fit(Path(part['mesh']).stem, hair_name, tables) if slot in {'Hi', 'Ht'} else None
+    if fit:
+        bone_name = fit['bone']
+    anchor_source = armature['nrc_body_source']
+    try:
+        anchor = original_gltf_anchor(anchor_source, bone_name)
+    except StopIteration:
+        if not hair_path:
+            raise RuntimeError(f'Headwear anchor unavailable: {bone_name}')
+        anchor = original_gltf_anchor(hair_path, bone_name)
+    if fit:
+        anchor = anchor @ game_fit_matrix(fit['base'])
+        if fit['extra']:
+            anchor = anchor @ game_fit_matrix(fit['extra'])
+    return anchor, bone_name, fit, hair_name
+
+
+def head_accessory_clearance(static, armature, margin=0.001, limit=0.008):
+    """把静态头部附件（面饰/口罩）沿脸朝向(-Y)整体前移，直到不再穿入头部皮肤。
+
+    游戏数据里没有面饰专属偏移表，导出后按头/脸网格表面做一次自适应“戴稳”修正：
+    只统计朝前表面上的穿入点，取 90 分位穿深（忽略镜腿末端等异常点），
+    每次最多前移 30 mm，最多迭代 4 次。返回累计前移米数。
+    """
+    from mathutils.bvhtree import BVHTree
+    meshes = [obj for obj in static if obj is not None and obj.type == 'MESH']
+    body = next((obj for obj in armature.children if obj.type == 'MESH'), None)
+    if not meshes or body is None:
+        return 0.0
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    evaluated = body.evaluated_get(depsgraph)
+    body_mesh = evaluated.to_mesh()
+    try:
+        body_mesh.transform(body.matrix_world)
+        bvh = BVHTree.FromPolygons(
+            [vertex.co.copy() for vertex in body_mesh.vertices],
+            [tuple(polygon.vertices) for polygon in body_mesh.polygons],
+        )
+    finally:
+        evaluated.to_mesh_clear()
+    forward = Vector((0.0, -1.0, 0.0))
+    head_bone = armature.data.bones.get('Bip001-Head') or armature.data.bones.get('Bip001-Head'.lower())
+    if head_bone is not None:
+        head_center = armature.matrix_world @ head_bone.head_local
+    else:
+        head_center = Vector((0.0, 0.0, 0.0))
+    total = 0.0
+    for _ in range(3):
+        depths = []
+        for obj in meshes:
+            matrix = obj.matrix_world
+            for vertex in obj.data.vertices:
+                point = matrix @ vertex.co
+                relative = point - head_center
+                # 只处理脸前方半球的顶点；镜腿/耳侧等本来就会进入头部轮廓，不参与前移
+                if relative.dot(forward) <= max(0.0, 0.35 * relative.length):
+                    continue
+                found = bvh.find_nearest(point)
+                if found is None or found[0] is None:
+                    continue
+                location, normal, _index, distance = found
+                if (point - location).dot(normal) < -1e-5 and normal.dot(forward) > 0.3:
+                    depths.append(distance)
+        if not depths:
+            break
+        shift = min(max(depths) + margin, limit - total)
+        if shift <= 1e-5:
+            break
+        offset = Matrix.Translation(forward * shift)
+        for obj in meshes:
+            obj.matrix_world = offset @ obj.matrix_world
+        total += shift
+    return total
+
+
 def prepare_wearable(armature, objects, part, report):
     """Preserve selected color IDs and bind authored static head accessories."""
     geometry_id = part.get('geometry_id', part['id'])
@@ -507,48 +616,79 @@ def prepare_wearable(armature, objects, part, report):
                 replacement = mat.copy()
                 replacement.name = mat.name.replace('_' + geometry_id, '_' + asset_id)
                 obj.data.materials[index] = replacement
-    if static:
-        slot = Path(part['mesh']).parent.parent.name
-        bone_name = 'Bip001-Head' if slot in {'Hi', 'Fi', 'Ms', 'Hg', 'Hp'} else None
-        if bone_name is None or bone_name not in armature.data.bones:
-            raise RuntimeError(f'Static attachment requires verified anchor/offset: {part["id"]} {slot}')
-        fit=None
-        tables=globals().get('_HEADWEAR_TABLES')
-        if tables is None:
-            tables={}
-            for table in ('HEADWEAR_TYPE_CONF','HEADWEAR_HAIR_CONF','HEADWEAR_OFFSET_CONF'):
-                source=Path(__file__).with_name(table+'.json')
-                tables[table]=list(json.loads(source.read_text(encoding='utf-8-sig')).get('RocoDataRows',{}).values()) if source.is_file() else []
-            globals()['_HEADWEAR_TABLES']=tables
-        hair_path=report.get('headwear_hair',{}).get('model') or report.get('hair_mesh')
-        if hair_path:hair_name=Path(hair_path).stem
-        else:
-            body=next(o for o in armature.children if o.type=='MESH')
-            hair_match=next((MATERIAL_PATTERN.match(SUFFIX_PATTERN.sub('',m.name)) for m in body.data.materials if m and material_token(m.name)=='Hr'),None)
-            who=Path(armature['nrc_body_source']).parent.name
-            hair_slot='Hr_Ht' if report.get('desired_has_hat') else 'Hr'
-            hair_name=f'SKM_{who}_{hair_slot}_{hair_base_id(hair_match.group(3))}' if hair_match else ''
-        fit=resolve_headwear_fit(Path(part['mesh']).stem,hair_name,tables)
-        if fit:bone_name=fit['bone']
-        anchor_source=armature['nrc_body_source']
-        try:anchor=original_gltf_anchor(anchor_source,bone_name)
-        except StopIteration:
-            if not hair_path:raise RuntimeError(f'Headwear anchor unavailable: {bone_name}')
-            anchor=original_gltf_anchor(hair_path,bone_name)
-        if fit:
-            anchor=anchor @ game_fit_matrix(fit['base'])
-            if fit['extra']:anchor=anchor @ game_fit_matrix(fit['extra'])
+    slot = Path(part['mesh']).parent.parent.name
+    core_body_bones = {'Bip001-Head', 'Bip001-Pelvis', 'Bip001-Spine', 'Bip001-Neck',
+                       'Bip001-L-Thigh', 'Bip001-R-Thigh', 'Bip001-L-Clavicle', 'Bip001-R-Clavicle'}
+    # 附件自带的小骨架通常只有 Root/Bone_CEC 之类的骨；用核心身体骨判断是否共享身体骨架。
+    local_skeleton = bool(armatures) and not any(
+        bone.name in core_body_bones for source in armatures for bone in source.data.bones)
+    head_attached = slot in {'Hi', 'Fi', 'Ms', 'Hg', 'Hp', 'Ht'}
+    if static or (head_attached and local_skeleton):
+        anchor, bone_name, fit, hair_name = head_attachment_anchor(part, armature, report)
+        if head_attached and local_skeleton:
+            # 自带头部小骨架的附件（例如带 Bone_CEC/TouShi 的头饰）：整副骨架移到头部锚点，
+            # 改名避免与身体骨冲突，合并后把根骨挂到锚点骨上，保留附件自身骨骼。
+            names = {}
+            roots = []
+            for source in armatures:
+                for bone in list(source.data.bones):
+                    old = bone.name
+                    new = f'A{part["id"]}_{old}'
+                    names[old] = new
+                    if bone.parent is None:
+                        roots.append(new)
+                    bone.name = new
+            for obj in objects:
+                if obj.type == 'MESH':
+                    for group in obj.vertex_groups:
+                        if group.name in names:
+                            group.name = names[group.name]
+            object_set = set(objects)
+            for obj in objects:
+                if obj.parent not in object_set:
+                    obj.matrix_world = anchor @ obj.matrix_world
+            # The fitted anchor defines authored placement. The independent
+            # accessory base follows the head, never an animated hair root.
+            part['attachment_anchor'] = 'Bip001-Head'
+            part['attachment_roots'] = roots
+            report.setdefault('independent_attachments', []).append({
+                'id': part['id'], 'anchor': 'Bip001-Head', 'placement_bone': bone_name,
+                'mode': 'local_skeleton_head_attachment',
+                'binding_revision': 'headwear-base-stable-v1-20261022',
+                'source_bone_name_map': names, 'roots': roots,
+                'placement_matrix': [list(row) for row in anchor],
+            })
+            return objects
+        for source in armatures:
+            if source.name in bpy.data.objects:
+                bpy.data.objects.remove(source, do_unlink=True)
+        # HEADWEAR tables define placement, not necessarily the deformation
+        # parent. Rigid face accessories must not inherit hair controls.
+        binding_bone = 'Bip001-Head' if head_attached else bone_name
         for obj in static:
             authored = obj.matrix_world.copy()
             # Blender reorients bone axes on import. Attachment uses original
             # glTF node axes, exactly as the game's/preview's bone parent does.
             obj.matrix_world = anchor @ authored
-            group = obj.vertex_groups.new(name=bone_name)
+            obj.vertex_groups.clear()
+            group = obj.vertex_groups.new(name=binding_bone)
             group.add(list(range(len(obj.data.vertices))), 1.0, 'REPLACE')
+            for modifier in list(obj.modifiers):
+                if modifier.type == 'ARMATURE':
+                    obj.modifiers.remove(modifier)
             modifier = obj.modifiers.new('NRC static attachment', 'ARMATURE');modifier.object = armature
+        # 面饰/口罩没有游戏侧偏移表：按头/脸皮肤表面做一次自适应前移，避免镜框穿脸。
+        clearance = head_accessory_clearance(static, armature) if slot in {'Fi', 'Ms'} else 0.0
         # merge_into_body recognizes meshes by the armature modifier.
         objects = list(objects) + [armature]
-        report.setdefault('static_attachments', []).append({'id':part['id'], 'bone':bone_name, 'meshes':len(static),'headwear_fit':fit,'hair':hair_name})
+        attachment = {'id':part['id'], 'bone':binding_bone, 'meshes':len(static),'headwear_fit':fit,'hair':hair_name,
+                      'placement_source': 'HEADWEAR_CONF' if fit else 'head_socket',
+                      'clearance_mm': round(clearance * 1000, 2)}
+        if slot == 'Fi':
+            attachment.update(placement_bone=bone_name, binding_revision='rigid-face-head-v1-20261022')
+        elif head_attached:
+            attachment.update(placement_bone=bone_name, binding_revision='headwear-base-stable-v1-20261022')
+        report.setdefault('static_attachments', []).append(attachment)
     return objects
 
 
@@ -659,6 +799,10 @@ def item_geometry_ids(item_id, transforms):
     return asset_id, list(dict.fromkeys((asset_id, base)))
 
 
+class ItemMeshMissing(RuntimeError):
+    """物品在游戏里只有材质/贴图，没有网格（未实装物品）；导出时应跳过而不是整体失败。"""
+
+
 def resolve_item(item_id, item_conf, export_root):
     """按配置表解析一件物品：占哪些槽位、对应的网格文件在哪。"""
     import json
@@ -707,7 +851,21 @@ def resolve_item(item_id, item_conf, export_root):
         if candidates:
             break
     if not candidates:
-        raise RuntimeError(f"在 {export_root} 下找不到物品 {item_id} 的 SKM 网格")
+        raise ItemMeshMissing(f"游戏素材里没有物品 {item_id} 的网格（仅有材质/贴图，未实装）")
+
+    # 网格实际槽位优先：极个别物品的 type_name 与资源槽位不一致（12108501 名称/同名女款
+    # 都是头饰、资源在 Hi，只有 type_name 标成帽子）。这类物品若按帽子语义处理，会被
+    # 要求切戴帽发型；而 HEADWEAR 三表只对基础发型定义偏移（1414 条配对里 0 条用 Ht 发型），
+    # 切过去只会让帽子悬空或掉到脖子。按网格槽位归类为头饰后，导出行为与游戏/预览器一致。
+    mesh_slot = None
+    slot_match = re.match(r"(?:SKM|SM)_PC[123]_([A-Za-z]+)_", candidates[0].name)
+    if slot_match:
+        mesh_slot = slot_match.group(1)
+    reclassified_from = None
+    if type_name == "帽子" and mesh_slot == "Hi":
+        reclassified_from = type_name
+        type_name = "头饰"
+        tokens = SLOT_TOKENS["头饰"]
 
     return {
         "id": str(item_id),
@@ -715,6 +873,8 @@ def resolve_item(item_id, item_conf, export_root):
         "geometry_id": geometry_id,
         "name": entry.get("name"),
         "type_name": type_name,
+        "mesh_slot": mesh_slot,
+        "reclassified_from": reclassified_from,
         "tokens": tokens,
         "gender": gender,
         "suits_id": entry.get("suits_id"),
@@ -756,13 +916,21 @@ def replace_default_hat_hair(armature, body_mesh, character, has_hat, report):
     report['headwear_hair']={'has_hat':has_hat,'model':str(path),'native_presets':len(manifest['native_presets'])}
 
 
-def resolve_requested_items(ids, item_conf, export_root):
+def resolve_requested_items(ids, item_conf, export_root, character=None):
     import json
     configured = json.loads(Path(item_conf).read_text(encoding='utf-8-sig')).get('RocoDataRows', {})
     resolved, skipped = [], []
     for item_id in ids:
         try:
-            resolved.append(resolve_item(item_id, item_conf, export_root))
+            item = resolve_item(item_id, item_conf, export_root)
+            # 物品性别与导出角色不一致时不能静默拼到错误骨架上（UI 不会这样传，脚本/套装数据错位会）
+            if character and item.get('gender') in (1, 2) and f"PC{item['gender']}" != character:
+                skipped.append({'id': str(item_id), 'reason': f"性别不匹配：物品属于 PC{item['gender']}，当前导出 {character}"})
+                continue
+            resolved.append(item)
+        except ItemMeshMissing as exc:
+            # 未实装物品（游戏只有材质/贴图）：跳过并记录，不阻断其余物品导出
+            skipped.append({'id': str(item_id), 'reason': str(exc)})
         except RuntimeError as exc:
             if str(item_id) in configured:
                 raise RuntimeError(f'Configured wardrobe item cannot be exported: {item_id}: {exc}') from exc
@@ -790,10 +958,12 @@ def find_part_mesh(export_root, character, slot, item):
 
     兼容 .gltf（UModel 库）与 .glb（CUE4Parse 带 morph 的库）两种后缀。
     """
-    avatar = Path(export_root) / character / "Avatar" / slot
+    folder = "Hr" if slot == "Hr_Ht" else slot
+    avatar = Path(export_root) / character / "Avatar" / folder
     if not avatar.is_dir():
         return None
-    for pattern in (f"{item}/SKM_*.gl*", f"**/SKM_*_{slot}_{item}.gl*", f"**/SKM_*_{item}.gl*"):
+    for pattern in (f"{item}/SKM_*_{slot}_{item}.gl*", f"{item}/SKM_*_{slot}_*.gl*",
+                    f"{item}/SKM_*.gl*", f"**/SKM_*_{slot}_{item}.gl*", f"**/SKM_*_{item}.gl*"):
         found = sorted(avatar.glob(pattern))
         if found:
             return found[0]
@@ -1230,15 +1400,36 @@ def build_ik(armature, knee_limit):
         constraint.subtarget = ik_name
         constraint.chain_count = chain
         constraint.use_tail = False
-        constraint.iterations = 40
-    if knee_limit:
-        for name in (bn("左ひざ"), bn("右ひざ")):
-            bone = armature.pose.bones.get(name)
-            if bone is not None:
-                bone.use_ik_limit_x = True
-                bone.ik_min_x = 0.0
-                bone.ik_max_x = 2.8
+        # 脚 IK 40 次、脚尖 IK 3 次：与常见 MMD 模型一致。
+        constraint.iterations = 3 if "つま先" in ik_name else 40
     return created
+
+
+def configure_knee_ik_limits(armature):
+    """Convert standard PMX knee limits using the FINAL leg bone orientation.
+
+    align_leg_bone_tails changes the local axes. Applying limits before that
+    step turns the old local Y flexion limit into shin twist on PMX reimport.
+    """
+    import importlib
+    convert = importlib.import_module(f"{ADDON}.core.pmx.importer").PMXImporter.convertIKLimitAngles
+    configured = []
+    minimum = (-math.pi, 0.0, 0.0)
+    # Keep zero reachable so a straight neutral leg is preserved on import.
+    maximum = (0.0, 0.0, 0.0)
+    for name in (bn("左ひざ"), bn("右ひざ")):
+        bone = armature.pose.bones.get(name)
+        if bone is None:
+            continue
+        local_min, local_max = convert(minimum, maximum, armature.matrix_world @ bone.bone.matrix_local)
+        for index, axis in enumerate("xyz"):
+            setattr(bone, f"lock_ik_{axis}", False)
+            setattr(bone, f"use_ik_limit_{axis}", True)
+            setattr(bone, f"ik_min_{axis}", local_min[index])
+            setattr(bone, f"ik_max_{axis}", local_max[index])
+        configured.append({"bone": name, "local_min": list(local_min), "local_max": list(local_max),
+                           "pmx_min": list(minimum), "pmx_max": list(maximum)})
+    return {"revision": "final-leg-axis-v1-20261021", "knees": configured}
 
 
 MATERIAL_PATTERN = re.compile(r"^MI_([A-Za-z0-9]+)_([A-Za-z]+)_(\d+)$")
@@ -1393,6 +1584,19 @@ def find_hair_texture(root, character, material_id, color_id):
         found = sorted(avatar.glob(pattern))
         if found:
             return found[0]
+    # 少数发型的色号贴图文件名与「基础 ID + 色号」不一致（例如 20101301 的 4 号色贴图叫
+    # T_PC2_Hr_2070260104_D.png）。这种情况按色号材质的 .props.txt 里的 BaseTex 反查。
+    material_name = f"MI_{character}_Hr_{number}"
+    for props in sorted(avatar.glob(f"**/{material_name}.props.txt")):
+        try:
+            text = props.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        names = re.findall(r"Texture2D'[^']*?\.([A-Za-z0-9_]+)'", text)
+        for texture_name in [n for n in names if n.endswith("_D")] + names:
+            found = sorted(avatar.glob(f"**/{texture_name}.png"))
+            if found:
+                return found[0]
     return None
 
 
@@ -1409,6 +1613,216 @@ def find_brow_texture(root, character, color_id, props_cache=None):
     if exact.is_file():
         return exact
     return None
+# 沙龙选项（肤色 / 瞳孔 / 面妆 / 发型）：
+# 预览器用运行时 shader 叠加或换网格/贴图实现；PMX 只能落成贴图与网格，因此在导出端逐项替换/烘焙。
+def skin_texture_ids(character, skin_id):
+    """肤色 avatar 3000000N 的贴图编号：脸皮 = 基础 + 400000 + N，身体 = 基础 + N。
+
+    旧表只硬编码了 30000001/2/3/7 四档，其余肤色（30000004/5/6/8）会被静默换成默认肤色；
+    导出库对 N=1..8 都有对应贴图，这里按同一规则统一推导。
+    """
+    try:
+        number = int(skin_id) - 30000000
+    except (TypeError, ValueError):
+        return None
+    if number <= 0:
+        return None
+    base = 10000000 if character == "PC1" else 20000000
+    return base + 400000 + number, base + number
+
+
+def derive_hair_model_id(avatar_id):
+    """预览器规则：avatar_id 11024025 -> 发型模型 10102401。"""
+    text = str(int(avatar_id))
+    if len(text) != 8:
+        return None
+    return int(f"{text[0]}01{text[5]}{text[3]}{text[4]}01")
+
+
+def find_file_ci(base, filename):
+    """按文件名在目录树里找文件（导出库有 Tex / TEX 两种大小写）。"""
+    base = Path(base)
+    if not base.is_dir():
+        return None
+    target = str(filename).lower()
+    cache = globals().setdefault("_FILE_CI_CACHE", {})
+    key = (str(base.resolve()).casefold(), target)
+    if key in cache:
+        return cache[key]
+    found = None
+    for dirpath, _dirnames, filenames in os.walk(base):
+        hit = next((name for name in filenames if name.lower() == target), None)
+        if hit:
+            found = Path(dirpath) / hit
+            break
+    cache[key] = found
+    return found
+
+
+def makeup_texture_path(part_root, character, avatar_id):
+    base = 15000000 if character == "PC1" else 25000000
+    number = int(avatar_id) - base
+    if number <= 0:
+        return None
+    return find_file_ci(Path(part_root) / character / "Avatar" / "Mp", f"T_{character}_Mp_{number:02d}.png")
+
+
+def pupil_texture_path(part_root, texture_id):
+    return find_file_ci(Path(part_root) / "PC_Es" / "Tex", f"T_PC_Es_{int(texture_id)}.png")
+
+
+def compose_makeup_texture(base_path, overlay_path, output_dir):
+    """把面妆 PNG 按 alpha 叠到脸皮上并存成新贴图：PMX 没有 shader 叠加层，只能烘焙。"""
+    import numpy as np
+
+    key = (str(Path(base_path).resolve()), str(Path(overlay_path).resolve()), str(Path(output_dir).resolve()))
+    cache = globals().setdefault("_MAKEUP_CACHE", {})
+    if key in cache:
+        return cache[key]
+    base_image = bpy.data.images.load(str(Path(base_path).resolve()), check_existing=True)
+    overlay_image = bpy.data.images.load(str(Path(overlay_path).resolve()), check_existing=True)
+    width, height = base_image.size
+    if tuple(overlay_image.size) != (width, height):
+        overlay_image.scale(width, height)
+    base_pixels = np.empty(width * height * 4, dtype=np.float32)
+    overlay_pixels = np.empty(width * height * 4, dtype=np.float32)
+    base_image.pixels.foreach_get(base_pixels)
+    overlay_image.pixels.foreach_get(overlay_pixels)
+    base_rgba = base_pixels.reshape(-1, 4)
+    overlay_rgba = overlay_pixels.reshape(-1, 4)
+    alpha = overlay_rgba[:, 3:4]
+    combined = base_rgba.copy()
+    combined[:, :3] = base_rgba[:, :3] * (1.0 - alpha) + overlay_rgba[:, :3] * alpha
+    combined[:, 3] = 1.0
+    target = Path(output_dir) / "Tex" / (Path(base_path).stem + "_makeup.png")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    image = bpy.data.images.new("NRC makeup " + Path(base_path).stem, width=width, height=height, alpha=False)
+    image.colorspace_settings.name = "sRGB"
+    image.pixels.foreach_set(combined.reshape(-1))
+    image.filepath_raw = str(target.resolve())
+    image.file_format = "PNG"
+    image.save()
+    cache[key] = target
+    return target
+
+
+def build_salon_overrides(part_root, character, args, output_dir):
+    """把沙龙选项解析成贴图替换表：肤色、面妆、瞳孔；返回 (salon, report)。"""
+    salon = {
+        "character": character,
+        "et_default_name": f"T_{character}_Et_{10400001 if character == 'PC1' else 20400001}_D.png",
+        "by_default_name": f"T_{character}_By_{10000001 if character == 'PC1' else 20000001}_D.png",
+        "output_dir": str(output_dir),
+    }
+    report = {}
+    if args.skin_avatar_id:
+        skin_id = int(args.skin_avatar_id)
+        ids = skin_texture_ids(character, skin_id) or skin_texture_ids(character, 30000001)
+        et_path = by_path = None
+        et_id = by_id = None
+        if ids:
+            et_id, by_id = ids
+            et_path = find_file_ci(Path(part_root) / character / "Avatar" / "Et", f"T_{character}_Et_{et_id}_D.png")
+            by_path = find_file_ci(Path(part_root) / character / "Avatar" / "By", f"T_{character}_By_{by_id}_D.png")
+        if not (et_path or by_path):
+            # 请求的肤色贴图缺失时退回默认肤色，并在报告里标出来
+            default_ids = skin_texture_ids(character, 30000001)
+            if default_ids:
+                et_id, by_id = default_ids
+                et_path = find_file_ci(Path(part_root) / character / "Avatar" / "Et", f"T_{character}_Et_{et_id}_D.png")
+                by_path = find_file_ci(Path(part_root) / character / "Avatar" / "By", f"T_{character}_By_{by_id}_D.png")
+            report["skin_fallback"] = {"requested_avatar_id": skin_id, "reason": "肤色贴图缺失，已退回默认肤色"}
+        if et_path or by_path:
+            salon["skin_et"] = et_path
+            salon["skin_by"] = by_path
+            report["skin"] = {"avatar_id": skin_id, "et_texture_id": et_id, "by_texture_id": by_id,
+                              "et_texture": str(et_path) if et_path else None,
+                              "by_texture": str(by_path) if by_path else None}
+    if args.makeup_avatar_id:
+        makeup_path = makeup_texture_path(part_root, character, args.makeup_avatar_id)
+        if makeup_path:
+            salon["makeup"] = makeup_path
+            report["makeup"] = {"avatar_id": int(args.makeup_avatar_id), "texture": str(makeup_path)}
+        if "skin_et" not in salon:
+            salon["skin_et"] = find_file_ci(Path(part_root) / character / "Avatar" / "Et", salon["et_default_name"])
+    if args.pupil_texture_id:
+        pupil_path = pupil_texture_path(part_root, args.pupil_texture_id)
+        if pupil_path:
+            salon["pupil"] = pupil_path
+            report["pupil"] = {"texture_id": int(args.pupil_texture_id), "texture": str(pupil_path)}
+    return salon, report
+
+
+def align_leg_bone_tails(armature):
+    """让腿骨 tail 等于子骨 head（PMX 的 displayConnection 用子骨索引）。
+
+    PMX 导入器按 displayConnection 决定骨长/方向；腿骨 tail 是矢量时，Blender 默认导入
+    （未勾选 fix_ik_links）的 IK 求解会把膝盖和脚折成奇怪姿势。参考标准 MMD 模型，
+    足/ひざ/足首 的 tail 都指向对应子骨 head。
+    """
+    bpy.ops.object.select_all(action="DESELECT")
+    armature.select_set(True)
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.mode_set(mode="EDIT")
+    edit = armature.data.edit_bones
+    changed = []
+    for side in ("左", "右"):
+        for parent_name, child_name in ((f"{side}足", f"{side}ひざ"), (f"{side}ひざ", f"{side}足首"),
+                                         (f"{side}足首", f"{side}つま先")):
+            parent = edit.get(bn(parent_name))
+            child = edit.get(bn(child_name))
+            if parent is not None and child is not None and parent.tail != child.head:
+                parent.tail = child.head.copy()
+                changed.append(parent.name)
+    bpy.ops.object.mode_set(mode="OBJECT")
+    return changed
+
+
+def selected_wears_hat(resolved):
+    """与预览器 wearsHatMesh 一致：只看「帽子」物品实际落在 Ht 槽。
+
+    例外 12108501（帽子-画间沉铁兽印象）资源实际在 Hi 槽：2026-10-22 复验过它
+    不能按帽子切 Hr_Ht——该物品的摆放偏移（WearType4）和 HEADWEAR_OFFSET 配对
+    都是按「基础发型」记录的，Ht 变体的偏移全为 0：
+      * 切 Ht 发型 + 基础发型偏移 → 帽子悬空（比头发高约 5~10cm）
+      * 切 Ht 发型 + Ht 发型偏移   → 帽子掉到脖子
+    保持 Hr 发型 + 基础发型偏移才与游戏/预览器一致（头发与帽檐轻微交叠是正常的）。
+    详见 outputs/兼容性普查修正-20261022/帽子12108501-验证.md。
+    """
+    for item in resolved:
+        if item["type_name"] != "帽子":
+            continue
+        match = re.match(r"(?:SKM|SM)_PC[123]_([A-Za-z]+)_", Path(item["mesh"]).stem)
+        return bool(match and match.group(1) == "Ht")
+    return False
+
+
+def remove_hair_bones(armature):
+    """移除身体自带头发骨：换发型后旧发型骨（尤其与新 Hr_Ht 同名的骨）会复用错误 rest pose。"""
+    names = [bone.name for bone in armature.data.bones if "TouFa" in bone.name or "TouiFa" in bone.name]
+    if not names:
+        return []
+
+    def depth(bone):
+        value = 0
+        while bone.parent is not None:
+            bone = bone.parent
+            value += 1
+        return value
+
+    bpy.ops.object.select_all(action="DESELECT")
+    armature.select_set(True)
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.mode_set(mode="EDIT")
+    edit = armature.data.edit_bones
+    ordered = sorted((name for name in names if name in edit), key=lambda name: depth(edit[name]), reverse=True)
+    for name in ordered:
+        if name in edit:
+            edit.remove(edit[name])
+    bpy.ops.object.mode_set(mode="OBJECT")
+    return names
+
+
 def claim_placeholder_materials(mesh, report):
     """源 GLB 里眉毛 primitive 没有材质（槽名 None），照原样导出就是空白材质。
 
@@ -1517,7 +1931,7 @@ def soften_face_socket(image, output_dir):
 
 
 def bind_textures(mesh, texture_root, hair_color=DEFAULT_COLOR_ID, brow_color=DEFAULT_COLOR_ID,
-                  tex_override=None, output_dir=None, eye_socket_fix=True):
+                  tex_override=None, output_dir=None, eye_socket_fix=True, salon=None):
     import importlib
 
     FnMaterial = importlib.import_module(f"{ADDON}.core.material").FnMaterial
@@ -1527,11 +1941,15 @@ def bind_textures(mesh, texture_root, hair_color=DEFAULT_COLOR_ID, brow_color=DE
     tex_override = tex_override or {}
     bound, missing = [], []
     props_cache = {}
-    for material in mesh.data.materials:
+    for slot_index, material in enumerate(mesh.data.materials):
         if material is None:
             continue
         if material.name.endswith("_OP"):
             continue  # 描边壳材质：MMD 用 輪郭(edge) 表达，见 configure_materials
+        if material.name in ("None", "") or material.name.startswith("dummy_material"):
+            # glTF 没有材质名的占位 primitive：面已删掉/被别的槽覆盖时不要报 unbound
+            if not any(polygon.material_index == slot_index for polygon in mesh.data.polygons):
+                continue
         name = SUFFIX_PATTERN.sub("", material.name)
         match = MATERIAL_PATTERN.match(name)
         source = "id-dir"
@@ -1560,6 +1978,16 @@ def bind_textures(mesh, texture_root, hair_color=DEFAULT_COLOR_ID, brow_color=DE
         if candidate is None:
             candidate = texture_from_material_dump(root, name, props_cache)
             source = "material-dump"
+        if candidate is None and name.endswith("_Im"):
+            base_name = name[:-3]
+            match = MATERIAL_PATTERN.match(base_name)
+            if match:
+                character, slot, item = match.groups()
+                candidate = find_texture(root, character, slot, item)
+                if candidate is None:
+                    candidate = texture_from_material_dump(root, base_name, props_cache)
+                if candidate is not None:
+                    source = "Im-fallback"
         if candidate is None:
             missing.append(material.name)
             continue
@@ -1567,8 +1995,31 @@ def bind_textures(mesh, texture_root, hair_color=DEFAULT_COLOR_ID, brow_color=DE
             candidate = Path(tex_override[name])
             source = "override"
             inferred = None
+        elif salon:
+            candidate_name = Path(candidate).name.lower() if candidate else ""
+            applied = None
+            if salon.get("pupil") and slot == "Es":
+                candidate = Path(salon["pupil"])
+                source = "salon-pupil"
+                applied = "pupil"
+            elif salon.get("skin_et") and candidate_name == str(salon["et_default_name"]).lower():
+                skin_path = Path(salon["skin_et"])
+                if salon.get("makeup"):
+                    candidate = compose_makeup_texture(skin_path, salon["makeup"], salon["output_dir"])
+                    source = "salon-skin+makeup"
+                    applied = "skin+makeup"
+                else:
+                    candidate = skin_path
+                    source = "salon-skin"
+                    applied = "skin"
+            elif salon.get("skin_by") and candidate_name == str(salon["by_default_name"]).lower():
+                candidate = Path(salon["skin_by"])
+                source = "salon-skin"
+                applied = "skin"
+            if applied:
+                inferred = None
         softened = None
-        if slot == "Et" and eye_socket_fix and output_dir and source != "override":
+        if slot == "Et" and eye_socket_fix and output_dir and source != "override" and not source.startswith("salon-"):
             face_image = bpy.data.images.load(str(Path(candidate).resolve()))
             candidate, softened = soften_face_socket(face_image, output_dir)
             source = "eye-socket-softened"
@@ -1727,21 +2178,26 @@ def hair_chains_from_weights(armature, weighted, root_name="Bone_M_TouiFa_root",
     return [{"chain": path, "weight": round(total, 1)} for total, path in scored[:limit]]
 
 
-def select_physics_plan(armature, weighted, templates):
+def select_physics_plan(armature, weighted, templates, excluded_bones=()):
     """保留带权重骨到锚点之间的真实父子链，不为当前服装不用的骨生成物理。"""
     selected = []
     for template in templates:
         anchor = "Bone_M_TouiFa_root" if template["label"] == "头发" else template["anchor"]
         root = armature.data.bones.get(bn(anchor))
+        if template["label"] == "头发":
+            log("PHYSDBG hair root:", root is not None, "toufa weighted:", sorted(name for name, value in weighted.items() if "Tou" in name and value > 1e-4)[:10])
         if root is None:
             continue
         active = set()
         for name, weight in weighted.items():
-            if weight <= 1e-4 or name == root.name:
+            if weight <= 1e-4 or name == root.name or name in excluded_bones:
                 continue
             bone = armature.data.bones.get(name)
             path = []
             while bone is not None and bone != root:
+                if bone.name in excluded_bones:
+                    bone = None
+                    break
                 path.append(bone.name)
                 bone = bone.parent
             if bone == root:
@@ -1758,6 +2214,8 @@ def select_physics_plan(armature, weighted, templates):
             for child in children:
                 walk(child, path + [child.name])
         walk(root, [])
+        if template["label"] == "头发":
+            log("PHYSDBG hair active:", len(active), "chains:", [len(chain) for chain in chains], "root children:", [c.name for c in root.children][:8])
         # A two-segment hair chain has too little inertia for a stable MMD
         # joint and can flip a full turn in one frame. Keep short hair rigidly
         # attached to the head; only simulate chains with at least three bones.
@@ -1868,9 +2326,27 @@ def add_physics(armature, report, meshes=()):
     native_data = json.loads(native_file.read_text(encoding='utf-8'))
     character = report['character']
     native_character = native_data['characters'][character]
-    native_plan, coverage = build_native_plan(parents, weighted, native_character)
+    # Independent head accessories have no mapped native spring settings.
+    # Preserve their full skeleton/weights, but do not infer dynamics from
+    # proximity or ancestry to the hair root (which moves the whole base).
+    protected_headwear = set()
+    for attachment in report.get('independent_attachments', []):
+        if attachment.get('mode') != 'local_skeleton_head_attachment':
+            continue
+        for name in attachment.get('roots', []):
+            bone = armature.data.bones.get(name)
+            if bone is not None:
+                protected_headwear.add(bone.name)
+                protected_headwear.update(child.name for child in bone.children_recursive)
+    physics_weights = {name: value for name, value in weighted.items() if name not in protected_headwear}
+    native_plan, coverage = build_native_plan(parents, physics_weights, native_character)
     claimed = {b for e in native_plan for c in e['chains'] for b in c}
-    legacy_plan = select_physics_plan(armature, weighted, PHYSICS_PLAN)
+    legacy_plan = select_physics_plan(armature, weighted, PHYSICS_PLAN, protected_headwear)
+    report['headwear_physics_policy'] = {
+        'revision': 'headwear-base-stable-v1-20261022',
+        'protected_bones': sorted(protected_headwear),
+        'policy': 'Independent headwear bases follow head; preserve bones and weights; no inferred spring physics without mapped native settings',
+    }
     # Retain the established hair policy and legacy coverage only where there
     # is no matching native clothing configuration; never simulate twice.
     fallback = [{**e, 'chains': [c for c in e['chains'] if not claimed.intersection(c)]} for e in legacy_plan]
@@ -2366,7 +2842,7 @@ def main():
     if args.eye_avatar_id is not None:
         replace_modular_head(armature, body_mesh, part_root, character, args.eye_avatar_id, report)
 
-    resolved, skipped_items = resolve_requested_items(args.item, args.item_conf, part_root)
+    resolved, skipped_items = resolve_requested_items(args.item, args.item_conf, part_root, character)
     report["items"] = resolved
     report["items_skipped"] = skipped_items
     if skipped_items:
@@ -2374,7 +2850,9 @@ def main():
     explicit_parts = [explicit_clothing_part(path) for path in args.clothes]
     user_tokens = {token for item in resolved + explicit_parts for token in item["tokens"]}
     default_has_hat=any(m and material_token(m.name)=='Ht' for m in body_mesh.data.materials)
-    desired_has_hat=('Ht' in user_tokens) or (default_has_hat and 'Hi' not in user_tokens)
+    # 与预览器一致：只有“选中的帽子确实走 Ht 槽”时才切戴帽发型；不能用身体自带默认帽子推断。
+    desired_has_hat=selected_wears_hat(resolved)
+    report['default_has_hat']=default_has_hat
     report['desired_has_hat']=desired_has_hat
     report["user_slot_tokens"] = sorted(user_tokens)
 
@@ -2406,7 +2884,27 @@ def main():
         report["body_parts_stripped"] = drop_materials(
             body_mesh, strip_now, preserve_upper_neck=True)
 
-    if not args.hair_mesh and desired_has_hat!=default_has_hat:
+    if args.hair_avatar_id:
+        model_id = derive_hair_model_id(args.hair_avatar_id)
+        log("HAIRDBG desired_has_hat:", desired_has_hat, "tokens:", sorted(user_tokens))
+        slot_order = ["Hr_Ht", "Hr"] if desired_has_hat else ["Hr", "Hr_Ht"]
+        log("HAIRDBG slot_order:", slot_order)
+        picked = None
+        picked_slot = None
+        for slot_name in slot_order:
+            picked = find_part_mesh(part_root, character, slot_name, model_id)
+            if picked:
+                picked_slot = slot_name
+                break
+        if picked is None:
+            raise RuntimeError(f"找不到发型 {args.hair_avatar_id}（模型 {model_id}）的网格")
+        args.hair_mesh = str(picked)
+        report["hair_selection"] = {"avatar_id": int(args.hair_avatar_id), "model_id": model_id,
+                                    "mesh": str(picked), "slot": picked_slot}
+        report["default_hair_bones_removed"] = remove_hair_bones(armature)
+
+    if not args.hair_mesh:
+        # 没有显式发型时也按“是否戴帽”切换到打包的 Hr / Hr_Ht 变体，与预览器一致。
         replace_default_hat_hair(armature,body_mesh,character,desired_has_hat,report)
 
     if args.hair_mesh:
@@ -2414,6 +2912,7 @@ def main():
         extra = import_gltf(args.hair_mesh)
         merge_into_body(armature, extra, strip_parts=False)
         report["hair_mesh"] = args.hair_mesh
+
 
     clothing_weighted = set()
     clothing_added = set()
@@ -2555,6 +3054,8 @@ def main():
         if args.tex_override:
             import json as _json
             tex_override = _json.loads(Path(args.tex_override).read_text(encoding="utf-8"))
+        salon_overrides, salon_report = build_salon_overrides(part_root, character, args, str(output.parent))
+        report["salon_options"] = salon_report
         bound, unbound = [], []
         for mesh in meshes:
             mesh_bound, mesh_unbound = bind_textures(
@@ -2562,6 +3063,7 @@ def main():
                 tex_override=tex_override,
                 output_dir=str(output.parent),
                 eye_socket_fix=not args.no_eye_socket_fix,
+                salon=salon_overrides,
             )
             bound += mesh_bound
             unbound += mesh_unbound
@@ -2586,6 +3088,10 @@ def main():
     bpy.ops.object.select_all(action="DESELECT")
     armature.select_set(True)
     bpy.context.view_layer.objects.active = armature
+    report["aligned_leg_tails"] = align_leg_bone_tails(armature)
+    if not args.no_ik:
+        report["knee_ik_limits"] = configure_knee_ik_limits(armature)
+        bpy.context.view_layer.update()
     bpy.ops.mmd_tools.export_pmx(
         filepath=str(output),
         scale=scale,
